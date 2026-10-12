@@ -1,5 +1,15 @@
 # Changelog
 
+## Light themes retuned to mid-tone (HDR-friendly)
+
+Both light palettes (`hud`, `manifest`) moved from near-white surfaces to
+mid-lightness tones (~51-65% relative luminance) so bright HDR panels don't
+glare. Raised plates are a lighter step of the same hue (no `#fff`); accents
+and status colours were deepened so every text pair stays >= 4.5:1 (WCAG AA)
+on the darkest surface. Dark palettes are untouched.
+
+---
+
 ## UI/UX overhaul — badges, sidebar navigation, dual palettes, verified data
 
 This pass addresses every item from the review, plus a handful of correctness
