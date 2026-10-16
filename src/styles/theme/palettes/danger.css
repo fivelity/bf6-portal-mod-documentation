@@ -1,0 +1,72 @@
+/* ==========================================================================
+   PALETTE · Danger   (id: danger) — alert red on a blackened canvas.
+
+   A palette is COLOUR VALUES ONLY. Type, shape and spacing live in
+   theme/tokens.css, and component CSS never hard-codes a colour — adding a
+   palette means copying this file and editing the values.
+
+   Selector shape (keep it when copying — it is what makes palette x mode work):
+     dark mode   :root[data-palette='danger']:not([data-theme='light'])
+     light mode  :root[data-palette='danger'][data-theme='light']
+   Light variants are mid-tone (surfaces sit well below white) so a bright HDR
+   panel never glares, and text/muted/accent stay >= 4.5:1 on the darkest
+   surface (the inset sidebar).
+   ========================================================================== */
+
+/* ---------- Dark ---------- */
+:root[data-palette='danger']:not([data-theme='light']) {
+  --wd-bg: #0f0b0b;
+  --wd-bg-raised: #171011;
+  --wd-bg-inset: #0a0707;
+  --wd-paper: #ecdcdc;
+  --wd-paper-dim: #b09494;
+  --wd-muted: #9a7e7e;
+  --wd-hairline: #2e1b1b;
+  --wd-hairline-strong: #482a2a;
+  --wd-gray-3: #b89c9c;
+  --wd-gray-7: #171011;
+
+  --wd-accent: #ff4a3d;
+  --wd-accent-bright: #ff7b6e;
+  --wd-accent-deep: #3a1311;
+  --wd-on-accent: #140403;
+
+  --wd-plate: var(--wd-bg-inset);
+  --wd-plate-hover: var(--wd-bg-raised);
+  --wd-code-bg: #0b0707;
+  --wd-inline-code-bg: rgba(255, 74, 61, 0.09);
+  --wd-glow-a: rgba(255, 74, 61, 0.06);
+  --wd-glow-b: rgba(255, 156, 46, 0.04);
+  --wd-backdrop: rgba(10, 7, 7, 0.82);
+  --wd-shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--wd-hairline-strong);
+  --wd-theme-color: #0a0707;
+}
+
+/* ---------- Light ---------- */
+:root[data-palette='danger'][data-theme='light'] {
+  --wd-bg: #d8c8c6;
+  --wd-bg-raised: #e5d8d6;
+  --wd-bg-inset: #cdbcb9;
+  --wd-paper: #1f1010;
+  --wd-paper-dim: #402424;
+  --wd-muted: #5a3a38;
+  --wd-hairline: #bda9a6;
+  --wd-hairline-strong: #a89390;
+  --wd-gray-3: #5e403e;
+  --wd-gray-7: #c2b0ad;
+
+  --wd-accent: #9a1f14;
+  --wd-accent-bright: #6b1209;
+  --wd-accent-deep: #e8b5ad;
+  --wd-on-accent: #fdeeec;
+
+  --wd-plate: var(--wd-bg-inset);
+  --wd-plate-hover: var(--wd-bg-raised);
+  --wd-code-bg: #dccdca;
+  --wd-inline-code-bg: rgba(154, 31, 20, 0.12);
+  --wd-glow-a: rgba(154, 31, 20, 0.07);
+  --wd-glow-b: rgba(122, 66, 6, 0.05);
+  --wd-backdrop: rgba(50, 28, 26, 0.55);
+  --wd-shadow-lg: 0 20px 48px rgba(50, 28, 26, 0.22), 0 0 0 1px var(--wd-hairline-strong);
+  --wd-theme-color: #cdbcb9;
+}

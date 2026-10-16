@@ -1,7 +1,6 @@
 /* ==========================================================================
-   HERO / SPLASH — palette-agnostic. Corner-bracket HUD frame and scanline
-   frame both live here as two opt-in variants; a palette just leaves
-   --wd-bracket / --wd-scanline transparent to suppress the one it doesn't want.
+   HERO / SPLASH — palette-agnostic. Typography and colour carry the look;
+   there is no decorative frame.
    ========================================================================== */
 
 [data-has-hero] .hero {
@@ -49,7 +48,6 @@
   text-transform: uppercase;
   padding: 0.8em 1.4em;
   border: 1px solid var(--wd-hairline-strong);
-  clip-path: var(--wd-clip-md);
   transition:
     background var(--wd-fast) var(--wd-ease),
     border-color var(--wd-fast) var(--wd-ease),
@@ -73,40 +71,6 @@
 [data-has-hero] .hero .sl-link-button.minimal:hover {
   border-color: var(--wd-accent);
   color: var(--wd-accent-bright);
-}
-
-/* ---------- Decorative HUD frame — <div class="wd-hud"> ---------- */
-.wd-hud {
-  position: relative;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  border: var(--wd-rule-strong);
-  background: linear-gradient(160deg, color-mix(in srgb, var(--wd-bg-raised) 70%, var(--wd-accent) 6%), var(--wd-bg-inset) 72%);
-}
-.wd-hud::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.35;
-  mix-blend-mode: overlay;
-  background: repeating-linear-gradient(0deg, var(--wd-scanline) 0, var(--wd-scanline) 1px, transparent 1px, transparent 3px);
-}
-.wd-hud::before {
-  content: '';
-  position: absolute;
-  inset: 14px;
-  pointer-events: none;
-  background:
-    linear-gradient(var(--wd-bracket), var(--wd-bracket)) top left / 2px 18px no-repeat,
-    linear-gradient(var(--wd-bracket), var(--wd-bracket)) top left / 18px 2px no-repeat,
-    linear-gradient(var(--wd-bracket), var(--wd-bracket)) top right / 2px 18px no-repeat,
-    linear-gradient(var(--wd-bracket), var(--wd-bracket)) top right / 18px 2px no-repeat,
-    linear-gradient(var(--wd-bracket), var(--wd-bracket)) bottom left / 2px 18px no-repeat,
-    linear-gradient(var(--wd-bracket), var(--wd-bracket)) bottom left / 18px 2px no-repeat,
-    linear-gradient(var(--wd-bracket), var(--wd-bracket)) bottom right / 2px 18px no-repeat,
-    linear-gradient(var(--wd-bracket), var(--wd-bracket)) bottom right / 18px 2px no-repeat;
-  opacity: 0.85;
 }
 
 /* Landing-page h2s get the ordinary rhythm from base.css automatically. */

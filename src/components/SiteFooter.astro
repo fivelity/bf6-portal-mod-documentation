@@ -1,0 +1,49 @@
+---
+/**
+ * SiteFooter — the single, full-width site footer.
+ *
+ * Replaces the old pair of stacked blocks (SDK-version line + disclaimer).
+ * Versions come from data/sdk-info.ts; nothing here is hand-typed.
+ */
+import { sdkStats } from '../data/sdk-info';
+
+const REPO_URL = 'https://github.com/fivelity/bf6-portal-sdk-documenation';
+
+const links = [
+  { label: 'Official Portal', href: 'https://portal.battlefield.com/' },
+  { label: 'GitHub', href: REPO_URL },
+  { label: 'mod-types', href: 'https://www.npmjs.com/package/bf6-portal-mod-types' },
+  { label: 'utils', href: 'https://www.npmjs.com/package/bf6-portal-utils' },
+] as const;
+---
+
+<footer class="wd-site-footer">
+  <div class="wd-site-footer__inner">
+    <div class="wd-site-footer__top">
+      <p class="wd-site-footer__brand">
+        <span class="wd-site-footer__name">BF6 Portal SDK</span>
+        <span class="wd-site-footer__tagline">Community docs, generated from the package typings.</span>
+      </p>
+      <nav class="wd-site-footer__links" aria-label="Footer">
+        {
+          links.map((link) => (
+            <a href={link.href} target="_blank" rel="noopener noreferrer">
+              {link.label}
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M7 17 17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </a>
+          ))
+        }
+      </nav>
+    </div>
+    <div class="wd-site-footer__bottom">
+      <p>Unofficial. Not affiliated with or endorsed by EA or DICE.</p>
+      <p class="wd-site-footer__versions">
+        <span>SDK <b>{sdkStats.sdkVersion}</b></span>
+        <span>mod-types <b>{sdkStats.modTypesVersion}</b></span>
+        <span>utils <b>{sdkStats.utilsVersion}</b></span>
+      </p>
+    </div>
+  </div>
+</footer>

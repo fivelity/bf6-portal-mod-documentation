@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import react from '@astrojs/react';
 import starlightLlmsTxt from 'starlight-llms-txt';
 import { buildReferenceSidebar } from './scripts/reference-sidebar.mjs';
 
@@ -28,6 +29,10 @@ export default defineConfig({
   base: BASE_PATH,
   outDir: './dist',
   integrations: [
+    // React powers the interactive header controls (theme switch, palette
+    // swatches, hovercards). Every island is tiny and hydrates on idle/load;
+    // the rest of the site stays static HTML.
+    react(),
     starlight({
       title: 'BF6 Portal SDK',
       description:
@@ -70,17 +75,18 @@ export default defineConfig({
       components: {
         Head: './src/components/Head.astro',
         SocialIcons: './src/components/SocialIcons.astro',
-        Footer: './src/components/Footer.astro',
+        ThemeSelect: './src/components/ThemeSelect.astro',
+        PageFrame: './src/components/PageFrame.astro',
         Sidebar: './src/components/ReferenceSidebar.astro',
         MarkdownContent: './src/components/MarkdownContent.astro',
       },
 
-      // Warm Gruvbox syntax themes sit naturally next to the brass palette.
+      // Warm Gruvbox syntax themes sit naturally next to every palette.
       expressiveCode: {
         themes: ['gruvbox-dark-hard', 'gruvbox-light-hard'],
         useStarlightUiThemeColors: false,
         styleOverrides: {
-          borderRadius: '2px',
+          borderRadius: '6px',
           codeFontFamily:
             "'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace",
           codeFontSize: '0.85rem',

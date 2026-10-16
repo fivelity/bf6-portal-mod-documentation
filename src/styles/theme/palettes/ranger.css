@@ -1,0 +1,72 @@
+/* ==========================================================================
+   PALETTE · Ranger   (id: ranger) — deep military green on a dark olive canvas.
+
+   A palette is COLOUR VALUES ONLY. Type, shape and spacing live in
+   theme/tokens.css, and component CSS never hard-codes a colour — adding a
+   palette means copying this file and editing the values.
+
+   Selector shape (keep it when copying — it is what makes palette x mode work):
+     dark mode   :root[data-palette='ranger']:not([data-theme='light'])
+     light mode  :root[data-palette='ranger'][data-theme='light']
+   Light variants are mid-tone (surfaces sit well below white) so a bright HDR
+   panel never glares, and text/muted/accent stay >= 4.5:1 on the darkest
+   surface (the inset sidebar).
+   ========================================================================== */
+
+/* ---------- Dark ---------- */
+:root[data-palette='ranger']:not([data-theme='light']) {
+  --wd-bg: #0a0e0b;
+  --wd-bg-raised: #111712;
+  --wd-bg-inset: #070a08;
+  --wd-paper: #dbe6d8;
+  --wd-paper-dim: #93a894;
+  --wd-muted: #82987f;
+  --wd-hairline: #1d2a1f;
+  --wd-hairline-strong: #2e4231;
+  --wd-gray-3: #9bb09a;
+  --wd-gray-7: #111712;
+
+  --wd-accent: #86c45a;
+  --wd-accent-bright: #b4e885;
+  --wd-accent-deep: #1b2a12;
+  --wd-on-accent: #0a1206;
+
+  --wd-plate: var(--wd-bg-inset);
+  --wd-plate-hover: var(--wd-bg-raised);
+  --wd-code-bg: #060907;
+  --wd-inline-code-bg: rgba(134, 196, 90, 0.09);
+  --wd-glow-a: rgba(134, 196, 90, 0.06);
+  --wd-glow-b: rgba(201, 162, 39, 0.04);
+  --wd-backdrop: rgba(4, 7, 5, 0.82);
+  --wd-shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--wd-hairline-strong);
+  --wd-theme-color: #070a08;
+}
+
+/* ---------- Light ---------- */
+:root[data-palette='ranger'][data-theme='light'] {
+  --wd-bg: #cdd5c6;
+  --wd-bg-raised: #dce3d6;
+  --wd-bg-inset: #c0c9b8;
+  --wd-paper: #121b12;
+  --wd-paper-dim: #2a3a2a;
+  --wd-muted: #3f503f;
+  --wd-hairline: #aeb9a5;
+  --wd-hairline-strong: #98a68f;
+  --wd-gray-3: #44564a;
+  --wd-gray-7: #b8c2b0;
+
+  --wd-accent: #2f5a14;
+  --wd-accent-bright: #1e3f0c;
+  --wd-accent-deep: #b7cfa4;
+  --wd-on-accent: #eef6e8;
+
+  --wd-plate: var(--wd-bg-inset);
+  --wd-plate-hover: var(--wd-bg-raised);
+  --wd-code-bg: #d6ddd0;
+  --wd-inline-code-bg: rgba(47, 90, 20, 0.12);
+  --wd-glow-a: rgba(47, 90, 20, 0.07);
+  --wd-glow-b: rgba(122, 66, 6, 0.05);
+  --wd-backdrop: rgba(24, 34, 24, 0.55);
+  --wd-shadow-lg: 0 20px 48px rgba(20, 28, 20, 0.22), 0 0 0 1px var(--wd-hairline-strong);
+  --wd-theme-color: #c0c9b8;
+}

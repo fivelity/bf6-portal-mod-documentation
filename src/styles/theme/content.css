@@ -58,28 +58,31 @@
 }
 
 /* ---------- Asides — note=info, tip=ok, caution=warn, danger=danger ---------- */
+/* One uniform 1px border + an inset rail. A thick border-inline-start on a
+   rounded box curves into a wedge at the corners; an inset shadow follows the
+   radius exactly, so the border renders cleanly on all four sides. */
 .starlight-aside {
+  --wd-aside-rail: var(--wd-hairline-strong);
   border: var(--wd-rule-strong);
-  border-inline-start-width: 3px;
-  border-radius: var(--wd-radius);
+  border-radius: var(--wd-radius-lg);
+  box-shadow: inset 3px 0 0 var(--wd-aside-rail);
   background: var(--wd-plate);
-  padding: 1rem 1.25rem;
-  clip-path: var(--wd-clip-notch);
+  padding: 1rem 1.25rem 1rem 1.4rem;
 }
 .starlight-aside--note {
-  border-inline-start-color: var(--wd-info);
+  --wd-aside-rail: var(--wd-info);
   background: color-mix(in srgb, var(--wd-info) 7%, var(--wd-plate));
 }
 .starlight-aside--tip {
-  border-inline-start-color: var(--wd-ok);
+  --wd-aside-rail: var(--wd-ok);
   background: color-mix(in srgb, var(--wd-ok) 7%, var(--wd-plate));
 }
 .starlight-aside--caution {
-  border-inline-start-color: var(--wd-warn);
+  --wd-aside-rail: var(--wd-warn);
   background: color-mix(in srgb, var(--wd-warn) 8%, var(--wd-plate));
 }
 .starlight-aside--danger {
-  border-inline-start-color: var(--wd-danger);
+  --wd-aside-rail: var(--wd-danger);
   background: color-mix(in srgb, var(--wd-danger) 8%, var(--wd-plate));
 }
 .starlight-aside__title {
@@ -103,7 +106,7 @@
 
 /* ---------- Expressive Code ---------- */
 .expressive-code {
-  --ec-brdRad: var(--wd-radius);
+  --ec-brdRad: var(--wd-radius-lg);
   --ec-brdCol: var(--wd-hairline-strong);
   --ec-codeBg: var(--wd-code-bg);
   --ec-frm-edBg: var(--wd-code-bg);
@@ -127,18 +130,18 @@
 
 /* ---------- <Card> / <CardGrid> ---------- */
 .sl-markdown-content .card-grid {
-  gap: 1px;
-  background: var(--wd-hairline);
-  border: var(--wd-rule);
+  gap: 0.75rem;
 }
 .card {
-  border: 0;
-  border-radius: 0;
+  border: var(--wd-rule-strong);
+  border-radius: var(--wd-radius-lg);
   background: var(--wd-plate);
   padding: 1.25rem 1.3rem 1.15rem;
   position: relative;
-  transition: background var(--wd-fast) var(--wd-ease);
-  clip-path: var(--wd-clip-notch);
+  overflow: hidden; /* clips the accent rail to the rounded corners */
+  transition:
+    background var(--wd-fast) var(--wd-ease),
+    border-color var(--wd-fast) var(--wd-ease);
 }
 .card::before {
   content: '';
@@ -151,6 +154,7 @@
 }
 .card:hover {
   background: var(--wd-plate-hover);
+  border-color: color-mix(in srgb, var(--wd-accent) 45%, var(--wd-hairline-strong));
 }
 .card .title {
   font-family: var(--wd-font-display);
@@ -179,10 +183,9 @@
 /* ---------- <LinkCard> ---------- */
 .sl-link-card {
   border: var(--wd-rule-strong);
-  border-radius: var(--wd-radius);
+  border-radius: var(--wd-radius-lg);
   background: var(--wd-plate);
   box-shadow: none;
-  clip-path: var(--wd-clip-notch);
   transition:
     border-color var(--wd-fast) var(--wd-ease),
     background var(--wd-fast) var(--wd-ease);
@@ -244,7 +247,7 @@ starlight-tabs .tablist-wrapper {
 
 /* ---------- <FileTree> ---------- */
 starlight-file-tree {
-  border-radius: var(--wd-radius);
+  border-radius: var(--wd-radius-lg);
   font-family: var(--wd-font-mono);
   font-size: 0.82rem;
   background: var(--wd-code-bg);
@@ -267,23 +270,14 @@ starlight-file-tree {
   gap: 1px;
   background: var(--wd-hairline);
   border: var(--wd-rule);
+  border-radius: var(--wd-radius-lg);
+  overflow: hidden;
   margin-block: 1.5rem;
 }
 .wd-stat {
   background: var(--wd-plate);
   padding: 1rem 1rem 0.85rem;
   position: relative;
-}
-.wd-stat::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 8px;
-  height: 8px;
-  border-top: 2px solid var(--wd-accent);
-  border-right: 2px solid var(--wd-accent);
-  opacity: var(--wd-tick-opacity);
 }
 .wd-stat b {
   display: block;
@@ -306,13 +300,14 @@ starlight-file-tree {
   gap: 1px;
   background: var(--wd-hairline);
   border: var(--wd-rule);
+  border-radius: var(--wd-radius-lg);
+  overflow: hidden;
   margin-block: 1.5rem;
 }
 .wd-plate {
   background: var(--wd-plate);
   padding: 1.3rem 1.3rem 1.1rem;
   position: relative;
-  clip-path: var(--wd-clip-notch);
 }
 .wd-plate::before {
   content: '';
@@ -341,6 +336,8 @@ starlight-file-tree {
 .wd-kv {
   margin-block: 1.25rem;
   border: var(--wd-rule);
+  border-radius: var(--wd-radius-lg);
+  overflow: hidden;
   background: var(--wd-plate);
 }
 .wd-kv > div {

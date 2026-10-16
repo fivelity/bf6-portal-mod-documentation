@@ -20,8 +20,10 @@
 }
 [data-section='reference'] h2 {
   font-size: 1.28rem;
-  border-left: 3px solid var(--wd-accent);
-  padding-left: 0.6rem;
+}
+[data-section='reference'] .sl-heading-wrapper.level-h2,
+[data-section='reference'] > h2 {
+  padding-inline-start: 0.7rem;
 }
 [data-section='reference'] h3 {
   font-size: 1.05rem;
@@ -65,5 +67,5 @@
 
 [data-section='reference'] blockquote {
   font-size: 0.86rem;
-  border-inline-start-color: var(--wd-hairline-strong);
+  box-shadow: inset 3px 0 0 var(--wd-hairline-strong);
 }

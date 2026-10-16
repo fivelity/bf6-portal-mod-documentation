@@ -48,6 +48,15 @@ for (const id of ids) {
   if (!ok) problems.push(`palette "${id}" is registered in themes.ts but src/styles/theme/palettes/${id}.css is missing or has no [data-palette='${id}'] selector`);
 }
 
+// Every palette also needs an "active swatch" selector in header.css, or its
+// swatch would never show as selected.
+const headerCss = await readFile('src/styles/components/header.css', 'utf8');
+for (const id of ids) {
+  const ok = headerCss.includes(`:root[data-palette='${id}'] .wd-palette__dot[data-palette-id='${id}']`);
+  console.log(`[docs:verify] ${ok ? 'OK  ' : 'FAIL'} palette "${id}" has an active-swatch rule`);
+  if (!ok) problems.push(`palette "${id}" has no active-swatch selector in src/styles/components/header.css`);
+}
+
 if (problems.length > 0) {
   console.error(`\n[docs:verify] ${problems.length} problem(s):`);
   for (const p of problems) console.error(`  - ${p}`);

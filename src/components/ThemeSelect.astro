@@ -1,0 +1,11 @@
+---
+/**
+ * ThemeSelect override — replaces Starlight's light/dark/auto <select> with
+ * the palette swatches + light/dark switch (React). Starlight also renders
+ * this slot inside the mobile menu, so it must work in more than one place;
+ * both instances read `<html data-theme / data-palette>`, so they stay in sync.
+ */
+import { ThemeControls } from './header/ThemeControls';
+---
+
+<ThemeControls client:load />

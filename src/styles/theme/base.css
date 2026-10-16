@@ -21,8 +21,8 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Canvas texture: two soft glows, optionally over a faint grid (HUD-style
-   palettes set --wd-grid-line; plate-style palettes leave it transparent). */
+/* Canvas: soft accent glows plus a faint film grain, painted on a fixed layer
+   BEHIND the content. No grid, no overlay on top of text. */
 body::before {
   content: '';
   position: fixed;
@@ -30,10 +30,9 @@ body::before {
   z-index: -1;
   pointer-events: none;
   background-image:
-    radial-gradient(circle at 18% 10%, var(--wd-glow-a), transparent 42%),
-    radial-gradient(circle at 90% 85%, var(--wd-glow-b), transparent 42%),
-    repeating-linear-gradient(0deg, var(--wd-grid-line) 0, var(--wd-grid-line) 1px, transparent 1px, transparent 64px),
-    repeating-linear-gradient(90deg, var(--wd-grid-line) 0, var(--wd-grid-line) 1px, transparent 1px, transparent 64px);
+    var(--wd-grain),
+    radial-gradient(60rem 36rem at 12% -6%, var(--wd-glow-a), transparent 70%),
+    radial-gradient(48rem 32rem at 100% 100%, var(--wd-glow-b), transparent 70%);
 }
 
 ::selection {
@@ -63,13 +62,22 @@ h1#_top {
   text-transform: var(--wd-heading-transform);
 }
 
+/* Starlight renders every heading as an INLINE element inside a block-level
+   `.sl-heading-wrapper`. Borders on an inline box fragment per wrapped line
+   (rail on line 1 only, rule under every line), so the section rule and the
+   accent rail live on the wrapper — and the rail is an inset shadow, which
+   sits inside the padding box and never meets the rule in a mitred corner. */
 .sl-markdown-content h2 {
   font-size: var(--wd-h2-size);
   line-height: var(--wd-h2-leading);
-  padding-bottom: 0.5rem;
-  padding-left: var(--wd-h2-pad);
+}
+.sl-markdown-content .sl-heading-wrapper.level-h2,
+.sl-markdown-content > h2 {
+  padding-block-end: 0.5rem;
+  padding-inline-start: var(--wd-h2-pad);
   border-bottom: var(--wd-rule);
-  border-left: var(--wd-h2-rail) solid var(--wd-accent);
+  box-shadow: inset var(--wd-h2-rail) 0 0 var(--wd-accent);
+  border-radius: 0 0 0 var(--wd-radius);
 }
 .sl-markdown-content h3 {
   font-size: var(--wd-h3-size);
@@ -153,10 +161,11 @@ h1#_top::before {
 .sl-markdown-content blockquote {
   margin-inline: 0;
   padding: 0.9rem 1.2rem;
-  border-inline-start: 3px solid var(--wd-accent);
+  border: var(--wd-rule-strong);
+  border-radius: var(--wd-radius-lg);
+  box-shadow: inset 3px 0 0 var(--wd-accent);
   background: var(--wd-plate);
   color: var(--sl-color-text);
-  clip-path: var(--wd-clip-notch);
 }
 
 /* ---------- Inline code ---------- */

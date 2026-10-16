@@ -1,27 +1,62 @@
 /* ==========================================================================
-   TOKENS — shared, palette-independent
-   Palette files (theme/palettes/*.css) supply every colour and every
-   shape/heading value. This file holds only what never changes between
-   palettes, plus the ONE mapping onto Starlight's custom properties, so
-   every built-in Starlight component inherits the active palette.
+   TOKENS — shared across every palette
+   Palette files (theme/palettes/*.css) supply COLOUR values only. This file
+   holds everything that never changes between palettes: type, shape, motion,
+   heading scale, status colours, the film-grain texture, and the ONE mapping
+   onto Starlight's custom properties so every built-in Starlight component
+   inherits the active palette.
    ========================================================================== */
 
 :root {
-  /* --- Type (display face comes from the palette) --- */
+  /* --- Type --- */
+  --wd-font-display: 'Oswald Variable', 'Oswald', 'Arial Narrow', Impact, sans-serif;
   --wd-font-body: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --wd-font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo,
     Consolas, monospace;
+
+  /* --- Shape: standard rounded corners everywhere, no clipped corners --- */
+  --wd-radius: 4px;
+  --wd-radius-lg: 6px;
+
+  /* --- Headings --- */
+  --wd-heading-transform: uppercase;
+  --wd-heading-weight: 600;
+  --wd-heading-weight-sub: 600;
+  --wd-heading-tracking: 0.015em;
+  --wd-h1-size: clamp(2.1rem, 4.4vw, 3.1rem);
+  --wd-h1-leading: 0.98;
+  --wd-h2-size: clamp(1.6rem, 2.6vw, 2.15rem);
+  --wd-h2-leading: 1.05;
+  --wd-h3-size: 1.28rem;
+  --wd-h4-size: 1.02rem;
+  --wd-h2-rail: 3px;
+  --wd-h2-pad: 0.8rem;
+  --wd-title-size: 1.35rem;
+  --wd-title-weight: 700;
+
+  --wd-hero-size: clamp(3rem, 8vw, 5.75rem);
+  --wd-hero-weight: 700;
+  --wd-hero-leading: 0.9;
+  --wd-hero-eyebrow: '[ BATTLEFIELD 6 · PORTAL SDK REFERENCE ]';
+
+  --wd-card-title-size: 1.25rem;
+  --wd-card-title-weight: 700;
+  --wd-thead-rule: 2px solid var(--wd-accent);
+  --wd-th-color: var(--wd-accent);
+  --wd-inline-code-border: 1px solid color-mix(in srgb, var(--wd-accent) 25%, transparent);
+  --wd-focus-halo: 0 0 0 4px color-mix(in srgb, var(--wd-accent) 20%, transparent);
+  --wd-ref-def-prefix: '// ';
 
   /* --- Rules --- */
   --wd-rule: 1px solid var(--wd-hairline);
   --wd-rule-strong: 1px solid var(--wd-hairline-strong);
 
   /* --- Motion --- */
-  --wd-ease: var(--wd-easing, cubic-bezier(0.16, 1, 0.3, 1));
+  --wd-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --wd-fast: 0.15s;
 
   /* --- Sidebar geometry (used by components/sidebar.css) --- */
   --wd-sb-toolbar-h: 3.5rem;
-  --wd-sb-row: 1.9rem;
 
   /* --- Starlight: type + layout --- */
   --sl-font: var(--wd-font-body);
@@ -29,7 +64,7 @@
   --sl-line-height: 1.65;
   --sl-line-height-headings: 1;
   --sl-content-width: 46rem;
-  --sl-sidebar-width: 19rem;
+  --sl-sidebar-width: 20rem;
   --sl-nav-height: 3.75rem;
   --sl-text-code: 0.86rem;
 
@@ -82,4 +117,43 @@
   --sl-shadow-sm: none;
   --sl-shadow-md: 0 0 0 1px var(--wd-hairline-strong);
   --sl-shadow-lg: var(--wd-shadow-lg);
+}
+
+/* --------------------------------------------------------------------------
+   Status colours — shared by every palette so asides, badges and callouts
+   keep their meaning (info / ok / warn / danger) whichever accent is active.
+   -------------------------------------------------------------------------- */
+:root {
+  --wd-info: #3fa9f5;
+  --wd-ok: #5ad46a;
+  --wd-warn: #ff9c2e;
+  --wd-danger: #ff4a3d;
+  --wd-info-low: #0f2438;   --wd-info-high: #a9d4f5;
+  --wd-ok-low: #12281a;     --wd-ok-high: #a8ecb2;
+  --wd-warn-low: #2e1f0a;   --wd-warn-high: #ffd199;
+  --wd-danger-low: #331410; --wd-danger-high: #ffb3ab;
+
+  --wd-rail-1: var(--wd-accent);
+  --wd-rail-2: var(--wd-info);
+  --wd-rail-3: var(--wd-ok);
+  --wd-rail-4: var(--wd-warn);
+
+  /* Film grain: faint white specks on dark surfaces (alpha is baked into the
+     SVG). Used as a background layer only — never over text — so it can't
+     hurt legibility. */
+  --wd-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n' x='0' y='0' width='100%25' height='100%25'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.04 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+:root[data-theme='light'] {
+  --wd-info: #174f85;
+  --wd-ok: #0f5a28;
+  --wd-warn: #7a4206;
+  --wd-danger: #96281a;
+  --wd-info-low: #b4cadf;   --wd-info-high: #0f3860;
+  --wd-ok-low: #b0d4ba;     --wd-ok-high: #0e4623;
+  --wd-warn-low: #dcc7a0;   --wd-warn-high: #5a3207;
+  --wd-danger-low: #dfb9b2; --wd-danger-high: #5e1a12;
+
+  /* Same grain, dark specks for light surfaces. */
+  --wd-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n' x='0' y='0' width='100%25' height='100%25'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.055 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }

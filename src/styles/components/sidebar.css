@@ -1,14 +1,43 @@
 /* ==========================================================================
    SIDEBAR NAVIGATION — filter box, scroll containment, edge fades, sticky
-   group headings, active-item highlighting, icon alignment.
+   group headings, a three-level hierarchy, indent guides and full-width
+   hover / active highlights.
    Paired with src/components/ReferenceSidebar.astro, which renders the
    filter toolbar and drives the scroll behaviour below via JS.
    Palette-agnostic — reads --wd-* tokens only.
+
+   GEOMETRY
+   Every row (link or group heading) is a full-bleed block: the sidebar has
+   no horizontal padding, each row pads itself, so a background fill always
+   runs edge to edge. A row's text start is computed from its nesting depth,
+   and each nested list draws its indent guide at its PARENT's text start —
+   so the guide and the text it belongs to can never drift apart.
+
+     depth 0  section heading   [icon] LABEL            text starts at --text0
+     depth 1  page link / group                         text0 + 1 x step
+     depth 2+ nested link                               text0 + d x step
    ========================================================================== */
+
+.sidebar-content {
+  --wd-sb-gutter: 1.1rem; /* left edge of section headings, right padding of every row */
+  --wd-sb-icon: 1.05rem;
+  --wd-sb-icon-gap: 0.55rem;
+  --wd-sb-text0: calc(var(--wd-sb-gutter) + var(--wd-sb-icon) + var(--wd-sb-icon-gap));
+  --wd-sb-step: 0.85rem;
+  --wd-sb-head-h: 2.5rem; /* section heading row (fixed so sticky offsets add up) */
+  --wd-sb-group-h: 2.2rem; /* nested group heading row */
+  --wd-sb-guide: color-mix(in srgb, var(--wd-hairline-strong) 75%, transparent);
+  --wd-sb-hover: color-mix(in srgb, var(--wd-accent) 7%, transparent);
+  --wd-sb-active: color-mix(in srgb, var(--wd-accent) 15%, transparent);
+  padding-inline: 0;
+}
 
 #starlight__sidebar,
 .sidebar-pane {
-  background: var(--sl-color-bg-sidebar);
+  background:
+    var(--wd-grain) fixed,
+    var(--sl-color-bg-sidebar);
+  background-color: var(--sl-color-bg-sidebar);
   border-inline-end: var(--wd-rule);
 }
 
@@ -26,8 +55,8 @@
   align-items: center;
   gap: 0.5rem;
   height: var(--wd-sb-toolbar-h);
-  margin: -1rem calc(-1 * var(--sl-sidebar-pad-x)) 0.75rem;
-  padding: 0 var(--sl-sidebar-pad-x);
+  margin: -1rem 0 0.5rem;
+  padding: 0 var(--wd-sb-gutter);
   background: var(--sl-color-bg-sidebar);
   border-bottom: var(--wd-rule);
 }
@@ -52,7 +81,7 @@
   padding: 0 1.9rem 0 2rem;
   border: var(--wd-rule-strong);
   border-radius: var(--wd-radius);
-  background: var(--wd-plate);
+  background: var(--wd-bg);
   color: var(--sl-color-white);
   font-family: var(--wd-font-body);
   font-size: 0.82rem;
@@ -133,7 +162,7 @@
   transition: opacity var(--wd-fast) var(--wd-ease);
 }
 .sidebar-pane::before {
-  top: 0;
+  top: var(--wd-sb-toolbar-h);
   margin-bottom: -1.75rem;
   background: linear-gradient(to bottom, var(--sl-color-bg-sidebar), transparent);
 }
@@ -147,116 +176,185 @@
   opacity: 1;
 }
 
-/* ---------- Group labels ---------- */
+/* ---------- Lists ---------- */
+.sidebar-content ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.sidebar-content li {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow-wrap: normal;
+}
+
+/* Depth, exposed to every row and guide as --wd-d (CSS can't count). */
+.sidebar-content ul.top-level { --wd-d: 0; }
+.sidebar-content ul.top-level ul { --wd-d: 1; }
+.sidebar-content ul.top-level ul ul { --wd-d: 2; }
+.sidebar-content ul.top-level ul ul ul { --wd-d: 3; }
+.sidebar-content ul.top-level ul ul ul ul { --wd-d: 4; }
+.sidebar-content ul.top-level ul ul ul ul ul { --wd-d: 5; }
+
+/* Section rhythm: one consistent gap between top-level groups. */
+.sidebar-content ul.top-level > li + li {
+  margin-top: 0.75rem;
+}
+
+/* ---------- Indent guides ----------
+   One thin line per NESTED list, drawn at the text-start of the row that
+   owns the list. Sits behind nothing — hover/active fills are translucent,
+   so the guide stays visible through them. */
+.sidebar-content ul ul {
+  position: relative;
+}
+.sidebar-content ul ul::before {
+  content: '';
+  position: absolute;
+  inset-block: 0.15rem;
+  inset-inline-start: calc(var(--wd-sb-text0) + (var(--wd-d) - 1) * var(--wd-sb-step));
+  width: 1px;
+  background: var(--wd-sb-guide);
+  pointer-events: none;
+}
+
+/* ---------- Rows: shared ---------- */
+.sidebar-content a,
+.sidebar-content summary {
+  position: relative;
+  border: 0;
+  border-radius: 0;
+  transition:
+    background 150ms ease,
+    color 150ms ease;
+}
+
+/* ---------- Level 0: section headings ---------- */
+.sidebar-content ul.top-level > li > details > summary,
+.sidebar-content ul.top-level > li > a {
+  height: var(--wd-sb-head-h);
+  padding-block: 0;
+  padding-inline: var(--wd-sb-gutter);
+}
 .sidebar-content .large {
   font-family: var(--wd-font-mono);
   font-size: 0.66rem;
   font-weight: 500;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  /* was --wd-muted at 0.66rem — under 4.5:1 in both palettes at this size.
-     paper-dim clears AA comfortably while staying visually secondary. */
+  /* paper-dim (not muted) keeps >= 4.5:1 at this size in every palette. */
   color: var(--wd-paper-dim);
-}
-.sidebar-content details > summary:hover .large {
-  color: var(--sl-color-white);
-}
-
-/* G3 — sticky group headings, solid background, depth via z-index */
-.sidebar-content details > summary {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  background: var(--sl-color-bg-sidebar);
-  padding-block: 0.5rem;
-}
-.sidebar-content details details > summary { z-index: 2; }
-.sidebar-content details details details > summary { z-index: 3; }
-
-/* Open/active-ancestor emphasis: a top-level group that is expanded, or
-   contains the current page, gets a quiet accent rail so it visually
-   separates from sibling groups the reader isn't inside right now. */
-.sidebar-content > .sidebar-content > ul.top-level > li > details[open] > summary,
-.sidebar-content ul.top-level > li > details[open] > summary {
-  border-inline-start: 2px solid var(--wd-accent);
-  padding-inline-start: calc(var(--sl-sidebar-item-padding-inline, 0.5rem) - 2px);
-}
-.sidebar-content ul.top-level > li > details:not([open]) > summary {
-  border-inline-start: 2px solid transparent;
 }
 .sidebar-content ul.top-level > li > details[open] > summary .large {
   color: var(--sl-color-white);
 }
 
-/* ---------- Links ---------- */
+/* ---------- Sticky headings, solid background, stacked offsets ---------- */
+.sidebar-content details > summary {
+  position: sticky;
+  z-index: calc(5 - var(--wd-d));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background:
+    var(--wd-grain) fixed,
+    var(--sl-color-bg-sidebar);
+  background-color: var(--sl-color-bg-sidebar);
+  cursor: pointer;
+  user-select: none;
+}
+.sidebar-content ul.top-level > li > details > summary {
+  top: var(--wd-sb-toolbar-h);
+}
+.sidebar-content ul ul > li > details > summary {
+  top: calc(var(--wd-sb-toolbar-h) + var(--wd-sb-head-h) + (var(--wd-d) - 1) * var(--wd-sb-group-h));
+}
+
+/* ---------- Levels 1+: links and nested group headings ---------- */
+.sidebar-content ul ul a,
+.sidebar-content ul ul details > summary {
+  padding-block: 0.36rem;
+  padding-inline-start: calc(var(--wd-sb-text0) + var(--wd-d) * var(--wd-sb-step));
+  padding-inline-end: var(--wd-sb-gutter);
+}
+.sidebar-content ul ul details > summary {
+  height: var(--wd-sb-group-h);
+  padding-block: 0;
+}
+
 .sidebar-content a {
+  display: block;
   font-size: 0.86rem;
-  border-radius: var(--wd-radius);
-  border-inline-start: 2px solid transparent;
+  line-height: 1.4;
+  font-weight: 400;
   color: var(--wd-paper-dim);
-  transition:
-    color var(--wd-fast) var(--wd-ease),
-    background var(--wd-fast) var(--wd-ease),
-    border-color var(--wd-fast) var(--wd-ease);
 }
-.sidebar-content a:hover {
-  color: var(--sl-color-white);
-  background: color-mix(in srgb, var(--wd-accent) 6%, transparent);
+.sidebar-content ul ul ul a {
+  font-size: 0.83rem;
 }
-.sidebar-content a[aria-current='page'] {
-  color: var(--sl-color-white);
-  background: color-mix(in srgb, var(--wd-accent) 12%, transparent);
-  border-inline-start-color: var(--wd-accent);
-  font-weight: 500;
-}
-.sidebar-content a[aria-current='page']:not(.not-content) {
-  color: var(--sl-color-white);
+.sidebar-content ul ul ul ul a {
+  font-size: 0.8rem;
 }
 
-.sidebar-content ul ul {
-  border: 0;
-  margin-inline-start: 0;
-}
-.sidebar-content ul ul li {
-  --sl-sidebar-item-padding-inline: 0.4rem;
-  border-inline-start: 0;
-  margin-inline-start: 0.4rem;
-  padding-inline-start: 0;
-}
-.sidebar-content ul ul > li:has(> a) {
-  border-inline-start: 1px solid var(--wd-hairline);
-  padding-inline-start: 0.4rem;
-  margin-inline-start: 0.4rem;
-}
-.sidebar-content ul ul > li:has(> a[aria-current='page']) {
-  border-inline-start-color: transparent;
-}
-
-/* When the toolbar is present the ul.top-level > li + li gap (Starlight's
-   default, 0.75rem) already provides rhythm; nothing extra needed here. */
-
-/* ---------- Sub-group labels + long symbol names ---------- */
-.sidebar-content details details > summary .large {
+/* Nested group headings read as items with a caret, a notch brighter. */
+.sidebar-content ul ul details > summary .large {
   font-family: var(--wd-font-body);
-  font-size: 0.82rem;
+  font-size: 0.86rem;
   font-weight: 500;
   letter-spacing: 0;
   text-transform: none;
   color: var(--wd-paper-dim);
 }
-.sidebar-content details details > summary:hover .large {
+.sidebar-content ul ul details[open] > summary .large {
   color: var(--sl-color-white);
 }
-.sidebar-content li {
-  overflow-wrap: normal;
+
+/* ---------- Hover + active: full-width fills ----------
+   The row fills edge to edge (the list has no padding, rows have no radius),
+   so the highlight can never look uneven or clipped on either side. Hover is
+   the lighter step of the active fill. No left-border indicator. */
+.sidebar-content a:hover,
+.sidebar-content details > summary:hover {
+  background: var(--wd-sb-hover);
+  color: var(--sl-color-white);
 }
+.sidebar-content details > summary:hover .large {
+  color: var(--sl-color-white);
+}
+.sidebar-content a[aria-current='page'],
+.sidebar-content a[aria-current='page']:hover,
+.sidebar-content a[aria-current='page']:focus {
+  background: var(--wd-sb-active);
+  color: var(--sl-color-text-accent);
+  font-weight: 500;
+}
+.sidebar-content a:focus-visible,
+.sidebar-content summary:focus-visible {
+  outline-offset: -2px;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* ---------- Caret ---------- */
+.sidebar-content summary .caret {
+  width: 1rem;
+  height: 1rem;
+  color: var(--wd-muted);
+  flex-shrink: 0;
+}
+.sidebar-content summary:hover .caret {
+  color: var(--sl-color-white);
+}
+
+/* ---------- Long symbol names ---------- */
 .sidebar-content li > a > span {
   display: block;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
+.sidebar-content a .sl-badge,
 .sidebar-content details details .sl-badge {
   font-size: 0.6rem;
   padding: 0 0.4em;
@@ -266,23 +364,25 @@
   border-radius: var(--wd-radius);
 }
 
-/* ---------- Top-level icons (ReferenceSidebar.astro injects these) ----------
-   Previously a bare inline-flex with no sizing rule, so the icon's own
-   viewBox size won a race against line-height and sat a few px off-centre.
-   Fixed size + inline-flex centering + nudged up half a pixel of optical
-   correction for the caret's baseline. */
+/* ---------- Section icons (ReferenceSidebar.astro injects these) ---------- */
 .sidebar-content [data-injected-sidebar-icon] {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.05rem;
-  height: 1.05rem;
-  margin-inline-end: 0.5em;
-  vertical-align: -0.2em;
+  width: var(--wd-sb-icon);
+  height: var(--wd-sb-icon);
+  margin-inline-end: var(--wd-sb-icon-gap);
+  vertical-align: -0.22em;
   flex-shrink: 0;
   color: var(--wd-accent);
 }
 .sidebar-content [data-injected-sidebar-icon] svg {
   width: 100%;
   height: 100%;
+}
+
+/* Mobile menu: the preferences row (theme controls) lives inside the sidebar
+   content, which no longer pads itself. */
+.sidebar-content .mobile-preferences {
+  padding-inline: var(--wd-sb-gutter);
 }

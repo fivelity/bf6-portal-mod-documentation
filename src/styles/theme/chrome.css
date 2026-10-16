@@ -1,15 +1,28 @@
 /* ==========================================================================
-   CHROME — header, on-this-page TOC, search dialog, pagination, footer meta.
-   Sidebar navigation now lives in styles/components/sidebar.css — this file
-   only keeps chrome that ISN'T the sidebar. Palette-agnostic.
+   CHROME — header shell, on-this-page TOC, search dialog, pagination.
+   Header CONTROLS live in components/header.css, the sidebar in
+   components/sidebar.css, the site footer in components/footer.css.
+   Palette-agnostic.
    ========================================================================== */
 
 header.header {
   border-bottom: var(--wd-rule);
-  background: var(--sl-color-bg-nav);
+  background:
+    var(--wd-grain) fixed,
+    linear-gradient(180deg, color-mix(in srgb, var(--wd-accent) 4%, var(--sl-color-bg-nav)), var(--sl-color-bg-nav) 70%);
+  background-color: var(--sl-color-bg-nav);
 }
 header.header > .header {
   border-bottom: 0;
+}
+/* A single accent hairline under the header that fades out toward both ends. */
+header.header::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 -1px;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--wd-accent) 55%, transparent) 50%, transparent);
 }
 .site-title {
   font-family: var(--wd-font-display);
@@ -58,7 +71,6 @@ site-search button[data-open-modal] {
   background: var(--wd-plate);
   font-family: var(--wd-font-mono);
   font-size: 0.78rem;
-  clip-path: var(--wd-clip-sm);
 }
 site-search button[data-open-modal]:hover {
   border-color: var(--wd-accent);
@@ -68,7 +80,7 @@ site-search kbd {
 }
 
 dialog[aria-label] {
-  border-radius: var(--wd-radius);
+  border-radius: var(--wd-radius-lg);
   background: var(--sl-color-bg);
   box-shadow: var(--sl-shadow-lg);
 }
@@ -95,11 +107,10 @@ dialog[aria-label] {
 
 /* ---------- Pagination ---------- */
 .pagination-links a {
-  border-radius: var(--wd-radius);
+  border-radius: var(--wd-radius-lg);
   border: var(--wd-rule-strong);
   background: var(--wd-plate);
   box-shadow: none;
-  clip-path: var(--wd-clip-md);
   transition:
     border-color var(--wd-fast) var(--wd-ease),
     background var(--wd-fast) var(--wd-ease);
@@ -125,164 +136,10 @@ starlight-lang-select select {
   font-size: 0.78rem;
 }
 
-/* ---------- Palette select ----------
-   Hand-rolled (not Starlight's <Select>) so the trigger can show a live
-   colour swatch instead of a generic menu glyph. Structure/sizing vars
-   mirror Select.astro's own `label`/`.icon`/`select`/`.caret` layout so it
-   sits pixel-identical next to the built-in theme + language pickers. */
-.wd-palette-select label {
-  --sl-label-icon-size: 0.7rem;
-  --sl-caret-size: 1.25rem;
-  --sl-inline-padding: 0.5rem;
-  --sl-select-width: 7.5em;
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  color: var(--wd-paper-dim);
-}
-.wd-palette-select label:hover {
-  color: var(--sl-color-white);
-}
-.wd-palette-select .icon {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-}
-.wd-palette-select .label-icon {
-  inset-inline-start: 0;
-}
-.wd-palette-select .caret {
-  inset-inline-end: 0;
-  width: var(--sl-caret-size);
-  height: var(--sl-caret-size);
-  color: var(--wd-muted);
-}
-/* The swatch: a small ring that always shows the ACTIVE palette's own
-   --wd-accent — it needs no script to stay in sync, because --wd-accent
-   itself changes the instant `data-palette` flips on <html>. */
-.wd-palette-swatch {
-  width: 0.7rem;
-  height: 0.7rem;
-  border-radius: 50%;
-  background: var(--wd-accent);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--wd-accent) 25%, transparent);
-}
-.wd-palette-select select {
-  border: 0;
-  border-radius: var(--wd-radius);
-  padding-block: 0.625rem;
-  padding-inline: calc(var(--sl-label-icon-size) + var(--sl-inline-padding) + 0.4rem)
-    calc(var(--sl-caret-size) + var(--sl-inline-padding) + 0.25rem);
-  margin-inline: calc(var(--sl-inline-padding) * -1);
-  width: calc(var(--sl-select-width) + var(--sl-inline-padding) * 2);
-  background-color: transparent;
-  font-family: var(--wd-font-mono);
-  font-size: 0.78rem;
-  text-overflow: ellipsis;
-  color: inherit;
-  cursor: pointer;
-  appearance: none;
-}
-.wd-palette-select option {
-  background-color: var(--sl-color-bg-nav);
-  font-family: var(--wd-font-mono);
-  /* `color` is set per-option inline (each palette's own swatch hex) so the
-     open listbox shows which hue belongs to which choice; Safari ignores
-     this on <option> and falls back to its own listbox styling, which is
-     a harmless no-op, not a breakage. */
-}
-
-/* ---------- Footer meta ---------- */
+/* ---------- Page-footer meta (edit link / last updated) ---------- */
 footer .meta a,
 footer .meta {
   font-family: var(--wd-font-mono);
   font-size: 0.72rem;
   letter-spacing: 0.03em;
-}
-
-/* ---------- Footer disclaimer callout ---------- */
-.wd-footer-disclaimer {
-  border-top: var(--wd-rule);
-  background: var(--wd-bg-inset);
-  padding: 0.9rem 1.5rem;
-}
-.wd-footer-disclaimer p {
-  max-width: 60rem;
-  margin-inline: auto;
-  font-size: 0.76rem;
-  line-height: 1.6;
-  color: var(--wd-muted);
-  text-align: center;
-}
-.wd-footer-disclaimer code {
-  font-family: var(--wd-font-mono);
-  color: var(--wd-accent-bright);
-}
-.wd-footer-disclaimer a {
-  color: var(--wd-info);
-  text-decoration-color: color-mix(in srgb, var(--wd-info) 45%, transparent);
-}
-
-/* ---------- SDK version pill (header, next to search) ---------- */
-.wd-sdk-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4em;
-  height: 1.9rem;
-  padding: 0 0.65em;
-  border: var(--wd-rule-strong);
-  border-radius: var(--wd-radius);
-  background: var(--wd-plate);
-  font-family: var(--wd-font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.03em;
-  color: var(--wd-paper-dim);
-  white-space: nowrap;
-  clip-path: var(--wd-clip-sm);
-}
-.wd-sdk-pill strong {
-  color: var(--wd-accent-bright);
-  font-weight: 600;
-}
-.wd-sdk-pill .wd-sdk-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--wd-ok);
-  flex-shrink: 0;
-}
-@media (max-width: 72rem) {
-  .wd-sdk-pill .wd-sdk-label {
-    display: none;
-  }
-}
-@media (max-width: 50rem) {
-  .wd-sdk-pill {
-    display: none;
-  }
-}
-
-/* ---------- Footer SDK-version line ---------- */
-.wd-footer-sdk {
-  border-top: var(--wd-rule);
-  background: var(--wd-bg-inset);
-  padding: 0.7rem 1.5rem;
-}
-.wd-footer-sdk p {
-  max-width: 60rem;
-  margin-inline: auto;
-  font-family: var(--wd-font-mono);
-  font-size: 0.72rem;
-  line-height: 1.7;
-  color: var(--wd-muted);
-  text-align: center;
-}
-.wd-footer-sdk strong {
-  color: var(--wd-accent-bright);
-  font-weight: 600;
-}
-.wd-footer-sdk code {
-  color: var(--sl-color-white);
 }
