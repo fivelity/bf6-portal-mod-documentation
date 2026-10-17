@@ -34,6 +34,7 @@
   --wd-sb-parent: var(--sl-color-white); /* parent rows read a step brighter than leaves */
   --wd-sb-guide: color-mix(in srgb, var(--wd-hairline-strong) 80%, transparent);
   --wd-sb-hover: color-mix(in srgb, var(--wd-accent) 7%, transparent);
+  --wd-sb-open: color-mix(in srgb, var(--wd-accent) 9%, transparent);
   --wd-sb-active: color-mix(in srgb, var(--wd-accent) 15%, transparent);
   --wd-sb-head-bg: color-mix(in srgb, var(--wd-accent) 6%, var(--wd-bg-raised));
   padding-inline: 0;
@@ -370,6 +371,29 @@
 }
 .sidebar-content ul ul details:not([open]) > summary .large {
   color: color-mix(in srgb, var(--wd-sb-parent) 82%, var(--wd-paper-dim));
+}
+
+/* OPEN parents are unmistakable: accent ink, a filled accent bullet, an
+   accent-tinted band (layered over the solid background so the sticky row
+   stays opaque), a thin accent bar on the row's left edge and an accent
+   caret. Distinct from the current page, which has the stronger fill + glow. */
+.sidebar-content ul ul details[open] > summary {
+  background:
+    linear-gradient(var(--wd-sb-open), var(--wd-sb-open)),
+    var(--wd-grain) fixed,
+    var(--sl-color-bg-sidebar);
+  background-color: var(--sl-color-bg-sidebar);
+  box-shadow: inset 2px 0 0 var(--wd-accent);
+}
+.sidebar-content ul ul details[open] > summary .large {
+  color: var(--wd-accent-bright);
+}
+.sidebar-content ul ul details[open] > summary::before {
+  background: var(--wd-accent);
+  border-color: var(--wd-accent);
+}
+.sidebar-content ul ul details[open] > summary .caret {
+  color: var(--wd-accent-bright);
 }
 
 /* ---------- Square bullets ----------
