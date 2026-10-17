@@ -29,7 +29,9 @@
   --wd-sb-bullet: 0.45rem;
   --wd-sb-step: 0.95rem; /* extra indent per nesting level */
   --wd-sb-head-h: 2.9rem; /* section header row (fixed so sticky offsets add up) */
-  --wd-sb-group-h: 2.2rem; /* nested group heading row */
+  --wd-sb-row: 2rem; /* EVERY nested row (link or group heading): one height, one rhythm */
+  --wd-sb-group-h: var(--wd-sb-row); /* nested group heading row (sticky offsets add up) */
+  --wd-sb-parent: var(--sl-color-white); /* parent rows read a step brighter than leaves */
   --wd-sb-guide: color-mix(in srgb, var(--wd-hairline-strong) 80%, transparent);
   --wd-sb-hover: color-mix(in srgb, var(--wd-accent) 7%, transparent);
   --wd-sb-active: color-mix(in srgb, var(--wd-accent) 15%, transparent);
@@ -217,19 +219,29 @@
   margin-top: 0.5rem;
 }
 
-/* ---------- The vertical line ---------- */
-.sidebar-content ul ul {
-  position: relative;
-  padding-block: 0.25rem 0.35rem;
-}
-.sidebar-content ul ul::before {
+/* ---------- The vertical lines ----------
+   Drawn PER ROW, not per list: opaque sticky group headings would otherwise
+   cover a list-level line and break it. Every nested row paints one 1px rail
+   per ancestor level (level 1 under the icon tile, deeper levels at their
+   parent's text start). Rows are fixed-height and touch, so the rails join
+   into unbroken lines; the square bullets (solid fill) sit on top of them. */
+.sidebar-content ul ul a::after,
+.sidebar-content ul ul details > summary::after {
   content: '';
   position: absolute;
-  inset-block: 0.9rem;
-  inset-inline-start: calc(var(--wd-bx) - 0.5px);
-  width: 1px;
-  background: var(--wd-sb-guide);
+  inset: 0;
+  z-index: 0;
   pointer-events: none;
+  background-image:
+    linear-gradient(var(--wd-sb-guide), var(--wd-sb-guide)),
+    repeating-linear-gradient(90deg, var(--wd-sb-guide) 0 1px, transparent 1px var(--wd-sb-step));
+  background-repeat: no-repeat;
+  background-size:
+    1px 100%,
+    calc((var(--wd-d) - 1) * var(--wd-sb-step)) 100%;
+  background-position:
+    calc(var(--wd-sb-gutter) + var(--wd-sb-tile) / 2 - 0.5px) 0,
+    calc(var(--wd-sb-text0) + var(--wd-sb-bullet) / 2 - 0.5px) 0;
 }
 
 /* ---------- Rows: shared ---------- */
@@ -315,17 +327,6 @@
 }
 
 /* ---------- Levels 1+: links and nested group headings ---------- */
-.sidebar-content ul ul a,
-.sidebar-content ul ul details > summary {
-  padding-block: 0.4rem;
-  padding-inline-start: calc(var(--wd-sb-text0) + (var(--wd-d) - 1) * var(--wd-sb-step));
-  padding-inline-end: var(--wd-sb-gutter);
-}
-.sidebar-content ul ul details > summary {
-  height: var(--wd-sb-group-h);
-  padding-block: 0;
-}
-
 .sidebar-content a {
   display: block;
   font-size: 0.86rem;
@@ -333,24 +334,42 @@
   font-weight: 400;
   color: var(--wd-paper-dim);
 }
-.sidebar-content ul ul ul a {
-  font-size: 0.83rem;
+
+/* One shared geometry for links AND group headings: same fixed height, same
+   padding formula (level N text starts at the same x whatever the row kind),
+   same font size. */
+.sidebar-content ul ul a,
+.sidebar-content ul ul details > summary {
+  box-sizing: border-box;
+  height: var(--wd-sb-row);
+  padding-block: 0;
+  padding-inline-start: calc(var(--wd-sb-text0) + (var(--wd-d) - 1) * var(--wd-sb-step));
+  padding-inline-end: var(--wd-sb-gutter);
+  font-size: 0.85rem;
+  line-height: 1;
 }
-.sidebar-content ul ul ul ul a {
-  font-size: 0.8rem;
+.sidebar-content ul ul a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.sidebar-content ul ul a > span:first-child {
+  flex: 1 1 auto;
 }
 
-/* Nested group headings read as items with a caret, a notch brighter. */
+/* Parent rows (anything with children) are heavier than leaves: semibold and
+   a brighter ink, dimmer only when collapsed. Leaves stay regular / paper-dim. */
 .sidebar-content ul ul details > summary .large {
   font-family: var(--wd-font-body);
-  font-size: 0.86rem;
-  font-weight: 500;
-  letter-spacing: 0;
+  font-size: inherit;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.005em;
   text-transform: none;
-  color: var(--wd-paper-dim);
+  color: var(--wd-sb-parent);
 }
-.sidebar-content ul ul details[open] > summary .large {
-  color: var(--sl-color-white);
+.sidebar-content ul ul details:not([open]) > summary .large {
+  color: color-mix(in srgb, var(--wd-sb-parent) 82%, var(--wd-paper-dim));
 }
 
 /* ---------- Square bullets ----------
@@ -366,17 +385,12 @@
   box-sizing: border-box;
   border: 1px solid var(--wd-muted);
   background: var(--sl-color-bg-sidebar);
+  z-index: 1;
+  inset-block-start: 50%;
+  translate: 0 -50%;
   transition:
     background 150ms ease,
     border-color 150ms ease;
-}
-.sidebar-content ul ul a::before {
-  /* centred on the first line of text */
-  inset-block-start: calc(0.4rem + 0.7 * 0.86rem - var(--wd-sb-bullet) / 2);
-}
-.sidebar-content ul ul details > summary::before {
-  inset-block-start: 50%;
-  translate: 0 -50%;
 }
 .sidebar-content ul ul a:hover::before,
 .sidebar-content ul ul details > summary:hover::before {
@@ -393,9 +407,17 @@
    The row fills edge to edge (the list has no padding, rows have no radius),
    so the highlight can never look uneven or clipped on either side. Hover is
    the lighter step of the active fill. No left-border indicator. */
-.sidebar-content ul ul a:hover,
-.sidebar-content ul ul details > summary:hover {
+.sidebar-content ul ul a:hover {
   background: var(--wd-sb-hover);
+  color: var(--sl-color-white);
+}
+/* Sticky summaries stay opaque while hovered (content scrolls beneath). */
+.sidebar-content ul ul details > summary:hover {
+  background:
+    linear-gradient(var(--wd-sb-hover), var(--wd-sb-hover)),
+    var(--wd-grain) fixed,
+    var(--sl-color-bg-sidebar);
+  background-color: var(--sl-color-bg-sidebar);
   color: var(--sl-color-white);
 }
 .sidebar-content ul ul details > summary:hover .large {
