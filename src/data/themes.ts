@@ -2,7 +2,7 @@
  * Colour-palette registry — the single list the UI and CI read from.
  *
  * Palettes are a second axis, independent of light/dark mode: every palette
- * defines BOTH a dark and a light variant, so 4 palettes x 2 modes = 8 looks.
+ * defines BOTH a dark and a light variant, so 5 palettes x 2 modes = 10 looks.
  *
  * To add one:
  *   1. add an entry below (id must be lowercase-kebab),
@@ -49,6 +49,12 @@ export const PALETTES = [
     label: 'Danger',
     description: 'Alert red on a blackened canvas.',
     swatch: '#ff4a3d',
+  },
+  {
+    id: 'violet',
+    label: 'Season 5',
+    description: 'Neon violet over dark steel.',
+    swatch: '#a875ff',
   },
 ] as const satisfies readonly PaletteDef[];
 

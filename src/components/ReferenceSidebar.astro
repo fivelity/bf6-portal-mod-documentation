@@ -189,7 +189,7 @@ const ICON_BY_LABEL: Record<string, string> = {
         const containsMatch = Array.from(d.querySelectorAll<HTMLLIElement>('li')).some(
           (li) => li.dataset.sbMatch === 'true',
         );
-        d.open = containsMatch;
+        d.open = containsMatch || d.matches('ul.top-level > li > details');
       }
 
       content!.dataset.sbEmpty = String(matchCount === 0);
@@ -252,7 +252,22 @@ const ICON_BY_LABEL: Record<string, string> = {
     document.fonts?.ready.then(center);
   }
 
+  /** Top-level sections are a fixed rail: always open, never toggled. */
+  function pinTopLevelSectionsOpen(): void {
+    const sections = document.querySelectorAll<HTMLDetailsElement>('ul.top-level > li > details');
+    for (const details of sections) {
+      details.open = true;
+      const summary = details.querySelector<HTMLElement>(':scope > summary');
+      if (!summary || summary.dataset.pinned) continue;
+      summary.dataset.pinned = 'true';
+      summary.tabIndex = -1;
+      // Covers keyboard activation too (Enter/Space on <summary> fires click).
+      summary.addEventListener('click', (event) => event.preventDefault());
+    }
+  }
+
   function init(): void {
+    pinTopLevelSectionsOpen();
     decorateTopLevelSidebarLabels();
     initSidebarFilter();
     initSidebarScrollUX();

@@ -222,7 +222,8 @@
 :root[data-palette='hud'] .wd-palette__dot[data-palette-id='hud'],
 :root[data-palette='ranger'] .wd-palette__dot[data-palette-id='ranger'],
 :root[data-palette='amber'] .wd-palette__dot[data-palette-id='amber'],
-:root[data-palette='danger'] .wd-palette__dot[data-palette-id='danger'] {
+:root[data-palette='danger'] .wd-palette__dot[data-palette-id='danger'],
+:root[data-palette='violet'] .wd-palette__dot[data-palette-id='violet'] {
   opacity: 1;
   transform: scale(1);
   box-shadow:

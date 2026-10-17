@@ -22,6 +22,7 @@
 @import './theme/palettes/ranger.css';
 @import './theme/palettes/amber.css';
 @import './theme/palettes/danger.css';
+@import './theme/palettes/violet.css';
 
 @import './theme/tokens.css';
 @import './theme/base.css';

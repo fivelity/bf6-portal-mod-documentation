@@ -1,0 +1,72 @@
+/* ==========================================================================
+   PALETTE · Violet   (id: violet) — Season 5 neon violet over dark steel.
+
+   A palette is COLOUR VALUES ONLY. Type, shape and spacing live in
+   theme/tokens.css, and component CSS never hard-codes a colour — adding a
+   palette means copying this file and editing the values.
+
+   Selector shape (keep it when copying — it is what makes palette x mode work):
+     dark mode   :root[data-palette='violet']:not([data-theme='light'])
+     light mode  :root[data-palette='violet'][data-theme='light']
+   Light variants are mid-tone (surfaces sit well below white) so a bright HDR
+   panel never glares, and text/muted/accent stay >= 4.5:1 on the darkest
+   surface (the inset sidebar).
+   ========================================================================== */
+
+/* ---------- Dark ---------- */
+:root[data-palette='violet']:not([data-theme='light']) {
+  --wd-bg: #0c0b13;
+  --wd-bg-raised: #131119;
+  --wd-bg-inset: #08070d;
+  --wd-paper: #e6e1f2;
+  --wd-paper-dim: #a09ab8;
+  --wd-muted: #8d87a8;
+  --wd-hairline: #242036;
+  --wd-hairline-strong: #393352;
+  --wd-gray-3: #a8a2c0;
+  --wd-gray-7: #131119;
+
+  --wd-accent: #a875ff;
+  --wd-accent-bright: #d1b4ff;
+  --wd-accent-deep: #2a1b4a;
+  --wd-on-accent: #120a22;
+
+  --wd-plate: var(--wd-bg-inset);
+  --wd-plate-hover: var(--wd-bg-raised);
+  --wd-code-bg: #06050a;
+  --wd-inline-code-bg: rgba(168, 117, 255, 0.10);
+  --wd-glow-a: rgba(168, 117, 255, 0.08);
+  --wd-glow-b: rgba(70, 120, 255, 0.06);
+  --wd-backdrop: rgba(6, 5, 10, 0.82);
+  --wd-shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--wd-hairline-strong);
+  --wd-theme-color: #08070d;
+}
+
+/* ---------- Light ---------- */
+:root[data-palette='violet'][data-theme='light'] {
+  --wd-bg: #d2cfdc;
+  --wd-bg-raised: #e0deea;
+  --wd-bg-inset: #c6c2d3;
+  --wd-paper: #17132a;
+  --wd-paper-dim: #2f2a47;
+  --wd-muted: #494262;
+  --wd-hairline: #b4afc6;
+  --wd-hairline-strong: #9d97b3;
+  --wd-gray-3: #4c4666;
+  --wd-gray-7: #bcb7cc;
+
+  --wd-accent: #5b2fb5;
+  --wd-accent-bright: #3d1a82;
+  --wd-accent-deep: #cdbdf0;
+  --wd-on-accent: #f4eeff;
+
+  --wd-plate: var(--wd-bg-inset);
+  --wd-plate-hover: var(--wd-bg-raised);
+  --wd-code-bg: #dad7e4;
+  --wd-inline-code-bg: rgba(91, 47, 181, 0.12);
+  --wd-glow-a: rgba(91, 47, 181, 0.08);
+  --wd-glow-b: rgba(40, 80, 200, 0.06);
+  --wd-backdrop: rgba(30, 24, 52, 0.55);
+  --wd-shadow-lg: 0 20px 48px rgba(28, 22, 48, 0.22), 0 0 0 1px var(--wd-hairline-strong);
+  --wd-theme-color: #c6c2d3;
+}

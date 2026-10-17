@@ -1,34 +1,39 @@
 /* ==========================================================================
-   SIDEBAR NAVIGATION — filter box, scroll containment, edge fades, sticky
-   group headings, a three-level hierarchy, indent guides and full-width
-   hover / active highlights.
+   SIDEBAR NAVIGATION — a single-column rail in the spirit of the Battlefield
+   Portal editor: always-open section headers with square icon tiles, and
+   sub-items marked by small square bullets threaded on one vertical line.
    Paired with src/components/ReferenceSidebar.astro, which renders the
    filter toolbar and drives the scroll behaviour below via JS.
    Palette-agnostic — reads --wd-* tokens only.
 
    GEOMETRY
-   Every row (link or group heading) is a full-bleed block: the sidebar has
-   no horizontal padding, each row pads itself, so a background fill always
-   runs edge to edge. A row's text start is computed from its nesting depth,
-   and each nested list draws its indent guide at its PARENT's text start —
-   so the guide and the text it belongs to can never drift apart.
+   Every row is a full-bleed block (the sidebar has no horizontal padding;
+   rows pad themselves), so hover/active fills always run edge to edge.
 
-     depth 0  section heading   [icon] LABEL            text starts at --text0
-     depth 1  page link / group                         text0 + 1 x step
-     depth 2+ nested link                               text0 + d x step
+     section header   [tile] LABEL      tile centre = the bullet column
+     level 1 item      ▫  Label         bullet centred under the tile,
+                                        text aligned with the header text
+     level 2+ item     ▫  Label         bullet's left edge flush with the
+                                        PARENT's text start; text one step in
+
+   Each nested list draws ONE vertical line through its bullet column, so
+   hierarchy reads from the line + bullets alone — no tree chevrons.
    ========================================================================== */
 
 .sidebar-content {
-  --wd-sb-gutter: 1.1rem; /* left edge of section headings, right padding of every row */
-  --wd-sb-icon: 1.05rem;
-  --wd-sb-icon-gap: 0.55rem;
-  --wd-sb-text0: calc(var(--wd-sb-gutter) + var(--wd-sb-icon) + var(--wd-sb-icon-gap));
-  --wd-sb-step: 0.85rem;
-  --wd-sb-head-h: 2.5rem; /* section heading row (fixed so sticky offsets add up) */
+  --wd-sb-gutter: 0.95rem; /* left edge of the section icon tile */
+  --wd-sb-tile: 1.5rem; /* square icon tile */
+  --wd-sb-icon: 0.95rem; /* glyph inside the tile */
+  --wd-sb-tile-gap: 0.7rem;
+  --wd-sb-text0: calc(var(--wd-sb-gutter) + var(--wd-sb-tile) + var(--wd-sb-tile-gap));
+  --wd-sb-bullet: 0.45rem;
+  --wd-sb-step: 0.95rem; /* extra indent per nesting level */
+  --wd-sb-head-h: 2.9rem; /* section header row (fixed so sticky offsets add up) */
   --wd-sb-group-h: 2.2rem; /* nested group heading row */
-  --wd-sb-guide: color-mix(in srgb, var(--wd-hairline-strong) 75%, transparent);
+  --wd-sb-guide: color-mix(in srgb, var(--wd-hairline-strong) 80%, transparent);
   --wd-sb-hover: color-mix(in srgb, var(--wd-accent) 7%, transparent);
   --wd-sb-active: color-mix(in srgb, var(--wd-accent) 15%, transparent);
+  --wd-sb-head-bg: color-mix(in srgb, var(--wd-accent) 6%, var(--wd-bg-raised));
   padding-inline: 0;
 }
 
@@ -197,23 +202,31 @@
 .sidebar-content ul.top-level ul ul ul ul { --wd-d: 4; }
 .sidebar-content ul.top-level ul ul ul ul ul { --wd-d: 5; }
 
-/* Section rhythm: one consistent gap between top-level groups. */
-.sidebar-content ul.top-level > li + li {
-  margin-top: 0.75rem;
+/* Bullet column (its centre x) for the rows of a list at depth d:
+   level 1 sits under the section icon tile; deeper levels hang from their
+   parent's text start. */
+.sidebar-content ul.top-level ul {
+  --wd-bx: calc(var(--wd-sb-gutter) + var(--wd-sb-tile) / 2);
+}
+.sidebar-content ul.top-level ul ul {
+  --wd-bx: calc(var(--wd-sb-text0) + (var(--wd-d) - 2) * var(--wd-sb-step) + var(--wd-sb-bullet) / 2);
 }
 
-/* ---------- Indent guides ----------
-   One thin line per NESTED list, drawn at the text-start of the row that
-   owns the list. Sits behind nothing — hover/active fills are translucent,
-   so the guide stays visible through them. */
+/* Section rhythm: clear, even gaps between top-level groups. */
+.sidebar-content ul.top-level > li + li {
+  margin-top: 0.5rem;
+}
+
+/* ---------- The vertical line ---------- */
 .sidebar-content ul ul {
   position: relative;
+  padding-block: 0.25rem 0.35rem;
 }
 .sidebar-content ul ul::before {
   content: '';
   position: absolute;
-  inset-block: 0.15rem;
-  inset-inline-start: calc(var(--wd-sb-text0) + (var(--wd-d) - 1) * var(--wd-sb-step));
+  inset-block: 0.9rem;
+  inset-inline-start: calc(var(--wd-bx) - 0.5px);
   width: 1px;
   background: var(--wd-sb-guide);
   pointer-events: none;
@@ -230,24 +243,54 @@
     color 150ms ease;
 }
 
-/* ---------- Level 0: section headings ---------- */
+/* ---------- Section headers (level 0) ----------
+   Always open: no caret, not clickable. A raised band with the label in
+   UPPERCASE and a square icon tile. */
 .sidebar-content ul.top-level > li > details > summary,
 .sidebar-content ul.top-level > li > a {
   height: var(--wd-sb-head-h);
   padding-block: 0;
-  padding-inline: var(--wd-sb-gutter);
+  padding-inline: var(--wd-sb-gutter) var(--wd-sb-gutter);
+  border-block: var(--wd-rule);
+  background:
+    var(--wd-grain) fixed,
+    var(--wd-sb-head-bg);
+  background-color: var(--wd-sb-head-bg);
+}
+.sidebar-content ul.top-level > li > details > summary {
+  pointer-events: none;
+  cursor: default;
+}
+.sidebar-content ul.top-level > li > details > summary .caret {
+  display: none;
 }
 .sidebar-content .large {
-  font-family: var(--wd-font-mono);
-  font-size: 0.66rem;
+  font-family: var(--wd-font-display);
+  font-size: 0.86rem;
   font-weight: 500;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  /* paper-dim (not muted) keeps >= 4.5:1 at this size in every palette. */
-  color: var(--wd-paper-dim);
-}
-.sidebar-content ul.top-level > li > details[open] > summary .large {
   color: var(--sl-color-white);
+}
+
+/* Square icon tile (ReferenceSidebar.astro injects the glyph). */
+.sidebar-content [data-injected-sidebar-icon] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--wd-sb-tile);
+  height: var(--wd-sb-tile);
+  margin-inline-end: var(--wd-sb-tile-gap);
+  vertical-align: middle;
+  flex-shrink: 0;
+  border-radius: 3px;
+  border: 1px solid color-mix(in srgb, var(--wd-accent) 40%, transparent);
+  background: color-mix(in srgb, var(--wd-accent) 16%, var(--wd-bg-inset));
+  color: var(--wd-accent-bright);
+}
+.sidebar-content [data-injected-sidebar-icon] svg {
+  width: var(--wd-sb-icon);
+  height: var(--wd-sb-icon);
 }
 
 /* ---------- Sticky headings, solid background, stacked offsets ---------- */
@@ -274,8 +317,8 @@
 /* ---------- Levels 1+: links and nested group headings ---------- */
 .sidebar-content ul ul a,
 .sidebar-content ul ul details > summary {
-  padding-block: 0.36rem;
-  padding-inline-start: calc(var(--wd-sb-text0) + var(--wd-d) * var(--wd-sb-step));
+  padding-block: 0.4rem;
+  padding-inline-start: calc(var(--wd-sb-text0) + (var(--wd-d) - 1) * var(--wd-sb-step));
   padding-inline-end: var(--wd-sb-gutter);
 }
 .sidebar-content ul ul details > summary {
@@ -310,16 +353,52 @@
   color: var(--sl-color-white);
 }
 
+/* ---------- Square bullets ----------
+   Outline by default, filled on hover and for the current page. The bullet
+   has a solid fill so the vertical line is hidden behind it. */
+.sidebar-content ul ul a::before,
+.sidebar-content ul ul details > summary::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: calc(var(--wd-bx) - var(--wd-sb-bullet) / 2);
+  width: var(--wd-sb-bullet);
+  height: var(--wd-sb-bullet);
+  box-sizing: border-box;
+  border: 1px solid var(--wd-muted);
+  background: var(--sl-color-bg-sidebar);
+  transition:
+    background 150ms ease,
+    border-color 150ms ease;
+}
+.sidebar-content ul ul a::before {
+  /* centred on the first line of text */
+  inset-block-start: calc(0.4rem + 0.7 * 0.86rem - var(--wd-sb-bullet) / 2);
+}
+.sidebar-content ul ul details > summary::before {
+  inset-block-start: 50%;
+  translate: 0 -50%;
+}
+.sidebar-content ul ul a:hover::before,
+.sidebar-content ul ul details > summary:hover::before {
+  background: var(--wd-accent);
+  border-color: var(--wd-accent);
+}
+.sidebar-content ul ul a[aria-current='page']::before {
+  background: var(--wd-accent-bright);
+  border-color: var(--wd-accent-bright);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--wd-accent) 60%, transparent);
+}
+
 /* ---------- Hover + active: full-width fills ----------
    The row fills edge to edge (the list has no padding, rows have no radius),
    so the highlight can never look uneven or clipped on either side. Hover is
    the lighter step of the active fill. No left-border indicator. */
-.sidebar-content a:hover,
-.sidebar-content details > summary:hover {
+.sidebar-content ul ul a:hover,
+.sidebar-content ul ul details > summary:hover {
   background: var(--wd-sb-hover);
   color: var(--sl-color-white);
 }
-.sidebar-content details > summary:hover .large {
+.sidebar-content ul ul details > summary:hover .large {
   color: var(--sl-color-white);
 }
 .sidebar-content a[aria-current='page'],
@@ -336,7 +415,7 @@
   box-shadow: none;
 }
 
-/* ---------- Caret ---------- */
+/* ---------- Caret (nested groups only) ---------- */
 .sidebar-content summary .caret {
   width: 1rem;
   height: 1rem;
@@ -362,23 +441,6 @@
   border-color: var(--wd-hairline-strong);
   color: var(--wd-muted);
   border-radius: var(--wd-radius);
-}
-
-/* ---------- Section icons (ReferenceSidebar.astro injects these) ---------- */
-.sidebar-content [data-injected-sidebar-icon] {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--wd-sb-icon);
-  height: var(--wd-sb-icon);
-  margin-inline-end: var(--wd-sb-icon-gap);
-  vertical-align: -0.22em;
-  flex-shrink: 0;
-  color: var(--wd-accent);
-}
-.sidebar-content [data-injected-sidebar-icon] svg {
-  width: 100%;
-  height: 100%;
 }
 
 /* Mobile menu: the preferences row (theme controls) lives inside the sidebar

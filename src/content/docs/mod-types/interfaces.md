@@ -1,0 +1,99 @@
+---
+title: Player / Vehicle / Game Mode Interfaces
+description: The opaque object types — players, vectors, objects — and how to read and compare them.
+---
+
+## Opaque types
+
+Every core runtime reference in `bf6-portal-mod-types` — `Player`,
+`Vehicle`, `Vector`, and dozens of others — is declared as an **opaque
+branded type**: an object whose only member is a private `_opaque` tag
+typed against a per-type `unique symbol`:
+
+```ts
+// The real declarations, from types.d.ts
+type Player = { _opaque: typeof PlayerSymbol };
+type Vector = { _opaque: typeof VectorSymbol };
+type Vehicle = { _opaque: typeof VehicleSymbol };
+```
+
+There is nothing to destructure or inspect directly. The `_opaque` brand
+exists purely so TypeScript won't treat two different opaque types as
+interchangeable (a `Vector` is not assignable to a `Player`) — it has no
+runtime meaning and you never touch it. See the
+[Variables reference](/reference/mod-types/bf6-portal-mod-types/namespaces/mod/variables/)
+for the symbol constants.
+
+## `mod.Player`
+
+The player object passed into event handlers is opaque. You cannot call
+`.getPosition()`, `.id`, or any other member on it directly — you always
+pass the reference into free functions on `mod`:
+
+```ts
+import type { mod } from 'bf6-portal-mod-types';
+
+function getPlayerId(player: mod.Player): number {
+  return mod.GetObjId(player); // the only way to get a stable numeric ID
+}
+
+function isSamePlayer(a: mod.Player, b: mod.Player): boolean {
+  return mod.Equals(a, b); // the only way to compare two opaque references
+}
+```
+
+This is a common source of confusion for anyone coming from
+object-oriented tutorials that assume a `player.GetPosition()` call
+exists — it doesn't, on `Player` or on any other opaque type in this SDK.
+
+## `mod.Vector`
+
+`Vector` follows the same pattern:
+
+```ts
+type Vector = { _opaque: typeof VectorSymbol }; // opaque — build with mod.CreateVector
+```
+
+- **Build** one with `mod.CreateVector(x, y, z)` — X is left/right
+  (east positive), Y is up, Z is forward/back (north negative).
+- **Read** the components with `mod.XComponentOf`, `mod.YComponentOf`,
+  `mod.ZComponentOf`.
+- **Compare** two vectors with `mod.Equals` — never `===`, which only
+  checks reference identity on the opaque wrapper.
+- **Get a player's position** two ways exist in the real SDK, and they are
+  not interchangeable: `mod.GetSoldierState(player, mod.SoldierStateVector.GetPosition)`
+  reads through the soldier state system, while `mod.GetObjectPosition(player)`
+  is the more efficient call recommended in the SDK's own doc comments for
+  simple position reads.
+
+Because working with three separate accessor calls for every vector
+component gets verbose fast, `bf6-portal-utils` ships a
+[`Vectors` module](/utils/vector-math/) with a transparent `{ x, y, z }`
+`Vector3` type and conversion helpers to and from `mod.Vector` — see that
+page for the full API.
+
+## `mod.Object`
+
+`mod.Object` is a **union** of every opaque scene-entity type the SDK
+declares — `CapturePoint`, `AreaTrigger`, `Spawner`, `WorldIcon`, `Player`,
+`Vehicle`, and the rest (see its declaration in the
+[Type Aliases reference](/reference/mod-types/bf6-portal-mod-types/namespaces/mod/type-aliases/)).
+It exists so functions that accept "any placed thing" — `mod.GetObjId` and
+`mod.GetObjectPosition` among them — can declare one parameter type instead
+of one overload per entity kind.
+
+`mod.GetObjId(object: mod.Object): number` takes one of these opaque
+references and returns its **numeric** ObjId — it does not convert an
+already-numeric ID into an object. That returned integer must match
+something actually placed in the level's scene data; the type system
+cannot validate that a given literal is valid for a specific map, so a
+stale or typo'd ObjId fails at runtime, not at compile time. Centralize
+ObjIds in one config module rather than inlining numeric literals
+throughout your mode.
+
+## Where types come from
+
+Every type here is generated from the installed package version, so field
+names and signatures always match what `tsc` will accept — see the
+[API Reference → mod-types](/reference/mod-types/) for the generated pages,
+including the full `mod.Object`-derived type hierarchy.
