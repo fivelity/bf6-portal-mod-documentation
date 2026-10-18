@@ -1,56 +1,58 @@
 /* ==========================================================================
    SIDEBAR NAVIGATION
 
-   A flat, square, high-contrast navigation rail in the manner of the
-   Battlefield menu system: near-black surfaces, hairline rules, a single
-   accent colour used only to say "you are here" (neutral fills mark hover and open), and
-   strict typographic hierarchy instead of decoration.
+   A flat, square, neutral navigation rail in the manner of the Battlefield
+   menu system: near-black surfaces, hairline rules, and strict typographic
+   hierarchy instead of decoration.
 
    HIERARCHY (reads at a glance, in this order)
-     L0  section header   UPPERCASE, tracked, rule underneath
-     L1+ open parent      white, semibold, lifted neutral field, white caret
-     L1+ closed parent    bright-grey, semibold, caret
-     L1+ leaf             grey, regular
-         current page     white on a faint accent field + solid accent bar
-   Indentation is one fixed step per level with a single 1px guide per
-   ancestor, drawn on each row so guides are continuous under sticky headings.
+     L0  section header   full-width neutral band, square icon tile, uppercase label
+     L1+ open parent      white, semibold, filled square bullet
+     L1+ closed parent    neutral, semibold, hollow square bullet
+     L1+ leaf             neutral, regular, hollow square bullet
+         current page     filled neutral field, outline, solid square bullet
+   One vertical hairline follows each bullet column. Deeper columns begin at
+   the preceding level's text start.
 
-   Square corners throughout; no glows or textures. Reads --wd-* tokens only, so every
-   palette and both colour modes work. Paired with ReferenceSidebar.astro
-   (filter box + scroll UX).
+   Square corners throughout; no glows or textures. Reads --wd-* tokens only.
+   Paired with ReferenceSidebar.astro (filter box + scroll UX).
    ========================================================================== */
 
-/* Row fill, animatable so hover eases instead of snapping. */
-@property --wd-row-tint {
-  syntax: '<color>';
-  inherits: false;
-  initial-value: transparent;
-}
-
 .sidebar-content {
-  --wd-sb-gutter: 1rem; /* left edge of section headers; right padding of rows */
-  --wd-sb-icon: 1rem; /* section icon */
-  --wd-sb-icon-gap: 0.6rem;
-  --wd-sb-pad1: 1.35rem; /* text start of level-1 rows */
-  --wd-sb-step: 0.9rem; /* extra indent per level (also the guide spacing) */
-  --wd-sb-head-h: 2.5rem; /* section header (fixed so sticky offsets add up) */
-  --wd-sb-row: 2rem; /* EVERY nested row, link or group: one height */
+  --wd-sb-gutter: 0.7rem;
+  --wd-sb-icon: 1.6rem;
+  --wd-sb-icon-gap: 0.55rem;
+  --wd-sb-bullet1: 1.325rem;
+  --wd-sb-step: 0.9rem;
+  --wd-sb-text1: calc(var(--wd-sb-bullet1) + var(--wd-sb-step));
+  --wd-sb-head-h: 2.5rem;
+  --wd-sb-row: 2rem;
   --wd-sb-group-h: var(--wd-sb-row);
   --wd-sb-guide: color-mix(in srgb, var(--wd-hairline-strong) 85%, transparent);
-  --wd-sb-hover: color-mix(in srgb, var(--wd-paper) 7%, transparent);
-  --wd-sb-open: color-mix(in srgb, var(--wd-paper) 5%, transparent);
-  --wd-sb-active: color-mix(in srgb, var(--wd-paper) 11%, transparent);
-  --wd-sb-base: var(--sl-color-bg-sidebar); /* opaque, for sticky rows */
+  --wd-sb-section: color-mix(in srgb, var(--wd-paper) 9%, var(--wd-sb-base));
+  --wd-sb-icon-tile: color-mix(in srgb, var(--wd-paper) 14%, var(--wd-sb-base));
+  --wd-sb-current: color-mix(in srgb, var(--wd-paper) 13%, var(--wd-sb-base));
   padding-inline: 0;
 }
 
 #starlight__sidebar,
 .sidebar-pane {
-  background:
-    var(--wd-grain) fixed,
-    var(--sl-color-bg-sidebar);
-  background-color: var(--sl-color-bg-sidebar);
+  --wd-sb-base: color-mix(in srgb, var(--wd-bg-inset) 85%, transparent);
+  --wd-sb-text: var(--wd-paper);
+  --wd-sb-text-dim: var(--wd-paper-dim);
+  --wd-sb-muted: var(--wd-muted);
+  background: var(--wd-sb-base);
+  background-color: var(--wd-sb-base);
   border-inline-end: var(--wd-rule);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  scrollbar-gutter: auto;
+  scrollbar-width: none;
+}
+#starlight__sidebar::-webkit-scrollbar,
+.sidebar-pane::-webkit-scrollbar {
+  display: none;
+  width: 0;
 }
 
 /* G1 — wheel input never leaks into the page scroll */
@@ -69,7 +71,7 @@
   height: var(--wd-sb-toolbar-h);
   margin: -1rem 0 0.5rem;
   padding: 0 var(--wd-sb-gutter);
-  background: var(--sl-color-bg-sidebar);
+  background: var(--wd-sb-base);
   border-bottom: var(--wd-rule);
 }
 .wd-sb-filter {
@@ -93,16 +95,16 @@
   padding: 0 1.9rem 0 2rem;
   border: var(--wd-rule-strong);
   border-radius: 0;
-  background: var(--wd-bg);
-  color: var(--sl-color-white);
+  background: color-mix(in srgb, var(--wd-bg) 85%, transparent);
+  color: var(--wd-paper);
   font-family: var(--wd-font-body);
   font-size: 0.82rem;
   transition: border-color var(--wd-fast) var(--wd-ease);
 }
 .wd-sb-filter input:focus-visible {
   outline: none;
-  border-color: var(--wd-accent);
-  box-shadow: var(--wd-focus-halo);
+  border-color: var(--wd-paper-dim);
+  box-shadow: none;
 }
 .wd-sb-filter input::placeholder {
   color: var(--wd-muted);
@@ -124,7 +126,7 @@
   cursor: pointer;
 }
 .wd-sb-filter-clear:hover {
-  color: var(--sl-color-white);
+  color: var(--wd-paper);
   background: var(--wd-hairline);
 }
 .wd-sb-filter.has-value .wd-sb-filter-clear {
@@ -134,7 +136,7 @@
   flex-shrink: 0;
   font-family: var(--wd-font-mono);
   font-size: 0.68rem;
-  color: var(--wd-muted);
+  color: var(--wd-sb-muted);
   white-space: nowrap;
 }
 
@@ -143,15 +145,15 @@
   display: none;
 }
 .sidebar-content[data-filtering='true'] li[data-sb-match='true'] mark {
-  background: color-mix(in srgb, var(--wd-accent) 35%, transparent);
-  color: var(--sl-color-white);
+  background: color-mix(in srgb, var(--wd-sb-text) 18%, var(--wd-sb-base));
+  color: var(--wd-sb-text);
   border-radius: 0;
 }
 .wd-sb-empty {
   display: none;
   padding: 1.5rem 0.5rem;
   text-align: center;
-  color: var(--wd-muted);
+  color: var(--wd-sb-muted);
   font-size: 0.84rem;
 }
 .sidebar-content[data-filtering='true'][data-sb-empty='true'] .wd-sb-empty {
@@ -176,12 +178,12 @@
 .sidebar-pane::before {
   top: var(--wd-sb-toolbar-h);
   margin-bottom: -1.75rem;
-  background: linear-gradient(to bottom, var(--sl-color-bg-sidebar), transparent);
+  background: linear-gradient(to bottom, var(--wd-sb-base), transparent);
 }
 .sidebar-pane::after {
   bottom: 0;
   margin-top: -1.75rem;
-  background: linear-gradient(to top, var(--sl-color-bg-sidebar), transparent);
+  background: linear-gradient(to top, var(--wd-sb-base), transparent);
 }
 .sidebar-pane[data-more-above]::before,
 .sidebar-pane[data-more-below]::after {
@@ -211,7 +213,7 @@
 
 /* Section rhythm */
 .sidebar-content ul.top-level > li + li {
-  margin-top: 0.25rem;
+  margin-top: 1px;
 }
 
 /* ---------- Rows: shared ---------- */
@@ -227,10 +229,24 @@
    ========================================================================== */
 .sidebar-content ul.top-level > li > details > summary,
 .sidebar-content ul.top-level > li > a {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
   height: var(--wd-sb-head-h);
   padding-block: 0;
   padding-inline: var(--wd-sb-gutter);
-  box-shadow: inset 0 -1px 0 var(--wd-hairline-strong);
+  background: var(--wd-sb-section);
+  border-bottom: var(--wd-rule);
+}
+.sidebar-content ul.top-level > li > a > span {
+  display: flex;
+  align-items: center;
+  font-family: var(--wd-font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--wd-sb-text);
 }
 .sidebar-content ul.top-level > li > details > summary {
   pointer-events: none;
@@ -240,15 +256,18 @@
   display: none;
 }
 .sidebar-content .large {
+  display: flex;
+  align-items: center;
+  min-width: 0;
   font-family: var(--wd-font-display);
   font-size: 0.8rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--sl-color-white);
+  color: var(--wd-sb-text);
 }
 
-/* Section icon (ReferenceSidebar.astro injects the glyph): plain, accent. */
+/* Section icon (ReferenceSidebar.astro injects the glyph). */
 .sidebar-content [data-injected-sidebar-icon] {
   display: inline-flex;
   align-items: center;
@@ -256,16 +275,16 @@
   width: var(--wd-sb-icon);
   height: var(--wd-sb-icon);
   margin-inline-end: var(--wd-sb-icon-gap);
-  vertical-align: -0.2em;
+  background: var(--wd-sb-icon-tile);
   flex-shrink: 0;
-  color: var(--wd-paper-dim);
+  color: var(--wd-sb-text);
 }
 .sidebar-content [data-injected-sidebar-icon] svg {
-  width: 100%;
-  height: 100%;
+  width: 1rem;
+  height: 1rem;
 }
 
-/* ---------- Sticky headings: fully opaque, stacked offsets ---------- */
+/* ---------- Sticky headings: stacked offsets with translucent surfaces ---------- */
 .sidebar-content details > summary {
   position: sticky;
   z-index: calc(5 - var(--wd-d));
@@ -274,10 +293,7 @@
   justify-content: space-between;
   cursor: pointer;
   user-select: none;
-  background:
-    linear-gradient(var(--wd-row-tint, transparent), var(--wd-row-tint, transparent)),
-    var(--wd-grain) fixed,
-    var(--wd-sb-base);
+  background: var(--wd-sb-base);
   background-color: var(--wd-sb-base);
 }
 .sidebar-content ul.top-level > li > details > summary {
@@ -295,48 +311,79 @@
   font-size: 0.86rem;
   line-height: 1.4;
   font-weight: 400;
-  color: var(--wd-paper-dim);
+  color: var(--wd-sb-text-dim);
 }
 
 .sidebar-content ul ul a,
 .sidebar-content ul ul details > summary {
-  --wd-row-tint: transparent;
   box-sizing: border-box;
-  height: var(--wd-sb-row);
+  height: calc(var(--wd-sb-row) - 2px);
   padding-block: 0;
-  padding-inline-start: calc(var(--wd-sb-pad1) + (var(--wd-d) - 1) * var(--wd-sb-step));
-  padding-inline-end: var(--wd-sb-gutter);
+  padding-inline-start: calc(var(--wd-sb-text1) + (var(--wd-d) - 1) * var(--wd-sb-step));
+  padding-inline-end: 0.5rem;
+  margin: 1px;
   font-size: 0.86rem;
   line-height: 1;
-  transition:
-    --wd-row-tint 120ms var(--wd-ease),
-    color 120ms var(--wd-ease);
+  transition: color 120ms var(--wd-ease);
 }
 .sidebar-content ul ul a {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: var(--wd-row-tint);
+  background-color: transparent;
 }
-.sidebar-content ul ul a > span:first-child {
+.sidebar-content ul ul a > span[data-injected-sidebar-page-icon] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 0.85rem;
+  width: 0.85rem;
+  height: 0.85rem;
+  color: var(--wd-sb-text-dim);
+}
+.sidebar-content ul ul a > span[data-injected-sidebar-page-icon] svg {
+  width: 100%;
+  height: 100%;
+}
+.sidebar-content ul ul a > span[data-sidebar-link-label] {
   flex: 1 1 auto;
 }
 
-/* Guides: one 1px line per ancestor level, at the text-start of that
-   ancestor. Painted per row, so they are unbroken and sit under sticky rows. */
-.sidebar-content ul ul ul a::before,
-.sidebar-content ul ul ul details > summary::before {
+/* Each row continues its level's guide and centers a square marker on it. */
+.sidebar-content ul ul a::before,
+.sidebar-content ul ul details > summary::before {
   content: '';
   position: absolute;
-  inset-block: 0;
-  inset-inline-start: var(--wd-sb-pad1);
-  width: calc((var(--wd-d) - 1) * var(--wd-sb-step));
-  background: repeating-linear-gradient(
-    90deg,
-    var(--wd-sb-guide) 0 1px,
-    transparent 1px var(--wd-sb-step)
-  );
+  inset-block: -1px;
+  inset-inline-start: calc(var(--wd-sb-bullet1) + (var(--wd-d) - 1) * var(--wd-sb-step));
+  z-index: 0;
+  width: 1px;
+  background: var(--wd-sb-guide);
   pointer-events: none;
+}
+.sidebar-content ul ul > li:last-child > a::before,
+.sidebar-content ul ul > li:last-child > details > summary::before {
+  bottom: 50%;
+}
+.sidebar-content ul ul a::after,
+.sidebar-content ul ul details > summary::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  inset-inline-start: calc(var(--wd-sb-bullet1) + (var(--wd-d) - 1) * var(--wd-sb-step) - 3px);
+  z-index: 1;
+  box-sizing: border-box;
+  width: 7px;
+  height: 7px;
+  transform: translateY(-50%);
+  border: 1px solid var(--wd-sb-text-dim);
+  background: var(--wd-sb-base);
+  pointer-events: none;
+}
+.sidebar-content ul ul a > span:not([data-injected-sidebar-page-icon]),
+.sidebar-content ul ul details > summary > .group-label {
+  position: relative;
+  z-index: 1;
 }
 
 /* Parent rows: heavier, brighter. Closed = one notch dimmer than open. */
@@ -347,44 +394,58 @@
   line-height: 1;
   letter-spacing: 0;
   text-transform: none;
-  color: color-mix(in srgb, var(--wd-paper) 82%, var(--wd-paper-dim));
+  color: color-mix(in srgb, var(--wd-sb-text) 82%, var(--wd-sb-text-dim));
 }
 
-/* OPEN parent: full-white label, accent caret, faint field, accent edge. */
+/* OPEN parent: white label and filled neutral marker. */
 .sidebar-content ul ul details[open] > summary {
-  --wd-row-tint: var(--wd-sb-open);
+  color: var(--wd-sb-text);
 }
 .sidebar-content ul ul details[open] > summary .large {
-  color: var(--wd-paper);
+  color: var(--wd-sb-text);
 }
 .sidebar-content ul ul details[open] > summary .caret {
-  color: var(--wd-paper);
+  color: var(--wd-sb-text);
+}
+.sidebar-content ul ul details[open] > summary::after {
+  border-color: var(--wd-sb-text);
+  background: var(--wd-sb-text);
 }
 
-/* Hover */
+/* Hover is an outline only; it never introduces an accent or a glow. */
 .sidebar-content ul ul a:hover,
 .sidebar-content ul ul details > summary:hover {
-  --wd-row-tint: var(--wd-sb-hover);
-  color: var(--wd-paper);
+  color: var(--wd-sb-text);
+  outline: 1px solid var(--wd-hairline-strong);
+  outline-offset: -1px;
+}
+.sidebar-content ul ul a:hover [data-injected-sidebar-page-icon],
+.sidebar-content ul ul a[aria-current='page'] [data-injected-sidebar-page-icon] {
+  color: var(--wd-sb-text);
 }
 .sidebar-content ul ul details > summary:hover .large {
-  color: var(--wd-paper);
+  color: var(--wd-sb-text);
 }
 
-/* CURRENT PAGE: white label on a faint accent field with a solid accent bar. */
+/* CURRENT PAGE: outlined neutral field and solid square marker. */
 .sidebar-content a[aria-current='page'],
 .sidebar-content a[aria-current='page']:hover,
 .sidebar-content a[aria-current='page']:focus {
-  --wd-row-tint: var(--wd-sb-active);
-  color: var(--wd-paper);
+  background-color: var(--wd-sb-current);
+  color: var(--wd-sb-text);
   font-weight: 600;
-  box-shadow: inset 3px 0 0 var(--wd-accent);
+  outline: 2px solid color-mix(in srgb, var(--wd-sb-text) 38%, transparent);
+  outline-offset: -2px;
+}
+.sidebar-content a[aria-current='page']::after {
+  border-color: var(--wd-sb-text);
+  background: var(--wd-sb-text);
 }
 
 .sidebar-content a:focus-visible,
 .sidebar-content summary:focus-visible {
-  outline: 1px solid var(--wd-accent-bright);
-  outline-offset: -2px;
+  outline: 1px solid var(--wd-sb-text);
+  outline-offset: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -398,11 +459,11 @@
 .sidebar-content summary .caret {
   width: 1rem;
   height: 1rem;
-  color: var(--wd-muted);
+  color: var(--wd-sb-muted);
   flex-shrink: 0;
 }
 .sidebar-content summary:hover .caret {
-  color: var(--sl-color-white);
+  color: var(--wd-sb-text);
 }
 
 /* ---------- Long symbol names ---------- */
@@ -418,7 +479,7 @@
   padding: 0 0.4em;
   background: transparent;
   border-color: var(--wd-hairline-strong);
-  color: var(--wd-muted);
+  color: var(--wd-sb-muted);
   border-radius: 0;
 }
 
