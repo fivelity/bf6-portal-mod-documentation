@@ -1,61 +1,52 @@
 /* ==========================================================================
-   SIDEBAR NAVIGATION — a quiet, instrument-grade command rail.
+   SIDEBAR NAVIGATION
 
-   Principles
-     • Hierarchy is carried by LIGHT and CONTRAST, not by indentation: rows
-       share one text column (+0.3rem per level). Leaves are dim, parents are
-       brighter and heavier, OPEN parents turn accent with a soft tint and a
-       growing indicator pip, and the current page is the brightest element
-       in the rail (tint + accent label + glowing pip).
-     • Surfaces are flat and soft: rounded rows that only fill on interaction,
-       open groups seated in a faint inset tray, a single hairline under each
-       section header. No bevels, no cut corners, no hard rules.
-     • Texture is nearly subliminal: one low-alpha mid-grey noise tile and a
-       soft accent glow in the pane corner add colour variance, not grit.
-     • Motion is short and physical: 140ms fills, the pip grows into place,
-       a press nudges the row in 1.5%. All gated by prefers-reduced-motion.
-   Static CSS only. Reads --wd-* tokens, so every palette and both colour
-   modes work. Paired with ReferenceSidebar.astro (filter + scroll UX).
+   A flat, square, high-contrast navigation rail in the manner of the
+   Battlefield menu system: near-black surfaces, hairline rules, a single
+   accent colour used only to say "you are here" (neutral fills mark hover and open), and
+   strict typographic hierarchy instead of decoration.
+
+   HIERARCHY (reads at a glance, in this order)
+     L0  section header   UPPERCASE, tracked, rule underneath
+     L1+ open parent      white, semibold, lifted neutral field, white caret
+     L1+ closed parent    bright-grey, semibold, caret
+     L1+ leaf             grey, regular
+         current page     white on a faint accent field + solid accent bar
+   Indentation is one fixed step per level with a single 1px guide per
+   ancestor, drawn on each row so guides are continuous under sticky headings.
+
+   Square corners throughout; no glows or textures. Reads --wd-* tokens only, so every
+   palette and both colour modes work. Paired with ReferenceSidebar.astro
+   (filter box + scroll UX).
    ========================================================================== */
 
-/* Animatable row fill (snaps instead of easing where @property is unsupported). */
+/* Row fill, animatable so hover eases instead of snapping. */
 @property --wd-row-tint {
   syntax: '<color>';
   inherits: false;
   initial-value: transparent;
 }
 
-/* Whisper-quiet fractal noise: neutral grey, ~3-5% alpha. */
-:root {
-  --wd-sb-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 .12 0 0 0 -.02'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
 .sidebar-content {
-  --wd-sb-gutter: 0.95rem; /* left edge of the section icon tile */
-  --wd-sb-tile: 1.5rem; /* section icon tile */
-  --wd-sb-icon: 0.9rem; /* glyph inside the tile */
-  --wd-sb-tile-gap: 0.7rem;
-  --wd-sb-text0: calc(var(--wd-sb-gutter) + var(--wd-sb-tile) + var(--wd-sb-tile-gap));
-  --wd-sb-step: 0.3rem; /* tiny per-level text offset — rank is shown by light */
-  --wd-sb-head-h: 2.7rem; /* section header (fixed so sticky offsets add up) */
-  --wd-sb-row: 2rem; /* EVERY nested row (link or group heading): one height */
+  --wd-sb-gutter: 1rem; /* left edge of section headers; right padding of rows */
+  --wd-sb-icon: 1rem; /* section icon */
+  --wd-sb-icon-gap: 0.6rem;
+  --wd-sb-pad1: 1.35rem; /* text start of level-1 rows */
+  --wd-sb-step: 0.9rem; /* extra indent per level (also the guide spacing) */
+  --wd-sb-head-h: 2.5rem; /* section header (fixed so sticky offsets add up) */
+  --wd-sb-row: 2rem; /* EVERY nested row, link or group: one height */
   --wd-sb-group-h: var(--wd-sb-row);
-  --wd-sb-inset: 0.5rem; /* row inset from the pane edge */
-  --wd-sb-r: 6px; /* row radius */
-  --wd-sb-hover: color-mix(in srgb, var(--wd-accent) 7%, transparent);
-  --wd-sb-open: color-mix(in srgb, var(--wd-accent) 9%, transparent);
-  --wd-sb-active: color-mix(in srgb, var(--wd-accent) 15%, transparent);
-  /* Opaque surfaces (sticky rows paint these so scrolled content never shows) */
-  --wd-sb-base: var(--sl-color-bg-sidebar);
-  --wd-sb-tray: color-mix(in srgb, var(--wd-accent) 4%, var(--sl-color-bg-sidebar));
+  --wd-sb-guide: color-mix(in srgb, var(--wd-hairline-strong) 85%, transparent);
+  --wd-sb-hover: color-mix(in srgb, var(--wd-paper) 7%, transparent);
+  --wd-sb-open: color-mix(in srgb, var(--wd-paper) 5%, transparent);
+  --wd-sb-active: color-mix(in srgb, var(--wd-paper) 11%, transparent);
+  --wd-sb-base: var(--sl-color-bg-sidebar); /* opaque, for sticky rows */
   padding-inline: 0;
 }
 
 #starlight__sidebar,
 .sidebar-pane {
   background:
-    var(--wd-sb-noise) fixed,
-    radial-gradient(120% 55% at 0% 0%, color-mix(in srgb, var(--wd-accent) 9%, transparent), transparent 70%) fixed,
     var(--wd-grain) fixed,
     var(--sl-color-bg-sidebar);
   background-color: var(--sl-color-bg-sidebar);
@@ -101,7 +92,7 @@
   height: 2.05rem;
   padding: 0 1.9rem 0 2rem;
   border: var(--wd-rule-strong);
-  border-radius: var(--wd-radius);
+  border-radius: 0;
   background: var(--wd-bg);
   color: var(--sl-color-white);
   font-family: var(--wd-font-body);
@@ -127,7 +118,7 @@
   width: 1.4rem;
   height: 1.4rem;
   border: 0;
-  border-radius: var(--wd-radius);
+  border-radius: 0;
   background: transparent;
   color: var(--wd-muted);
   cursor: pointer;
@@ -154,7 +145,7 @@
 .sidebar-content[data-filtering='true'] li[data-sb-match='true'] mark {
   background: color-mix(in srgb, var(--wd-accent) 35%, transparent);
   color: var(--sl-color-white);
-  border-radius: 2px;
+  border-radius: 0;
 }
 .wd-sb-empty {
   display: none;
@@ -220,7 +211,7 @@
 
 /* Section rhythm */
 .sidebar-content ul.top-level > li + li {
-  margin-top: 0.35rem;
+  margin-top: 0.25rem;
 }
 
 /* ---------- Rows: shared ---------- */
@@ -232,15 +223,14 @@
 }
 
 /* ==========================================================================
-   SECTION HEADERS (level 0) — always open, not clickable.
-   A small-caps label, a softly lit icon tile, one hairline underneath.
+   L0 — SECTION HEADERS (always open, not clickable)
    ========================================================================== */
 .sidebar-content ul.top-level > li > details > summary,
 .sidebar-content ul.top-level > li > a {
   height: var(--wd-sb-head-h);
   padding-block: 0;
   padding-inline: var(--wd-sb-gutter);
-  box-shadow: inset 0 -1px 0 var(--wd-hairline);
+  box-shadow: inset 0 -1px 0 var(--wd-hairline-strong);
 }
 .sidebar-content ul.top-level > li > details > summary {
   pointer-events: none;
@@ -251,43 +241,31 @@
 }
 .sidebar-content .large {
   font-family: var(--wd-font-display);
-  font-size: 0.78rem;
-  font-weight: 500;
-  letter-spacing: 0.13em;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--sl-color-white);
 }
 
-/* Icon tile (ReferenceSidebar.astro injects the glyph) */
+/* Section icon (ReferenceSidebar.astro injects the glyph): plain, accent. */
 .sidebar-content [data-injected-sidebar-icon] {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: var(--wd-sb-tile);
-  height: var(--wd-sb-tile);
-  margin-inline-end: var(--wd-sb-tile-gap);
-  vertical-align: middle;
-  flex-shrink: 0;
-  border-radius: 7px;
-  border: 1px solid color-mix(in srgb, var(--wd-accent) 30%, transparent);
-  background: linear-gradient(
-    160deg,
-    color-mix(in srgb, var(--wd-accent) 24%, transparent),
-    color-mix(in srgb, var(--wd-accent) 6%, transparent)
-  );
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 0 16px -4px color-mix(in srgb, var(--wd-accent) 55%, transparent);
-  color: var(--wd-accent-bright);
-}
-.sidebar-content [data-injected-sidebar-icon] svg {
   width: var(--wd-sb-icon);
   height: var(--wd-sb-icon);
+  margin-inline-end: var(--wd-sb-icon-gap);
+  vertical-align: -0.2em;
+  flex-shrink: 0;
+  color: var(--wd-paper-dim);
+}
+.sidebar-content [data-injected-sidebar-icon] svg {
+  width: 100%;
+  height: 100%;
 }
 
-/* ---------- Sticky headings: opaque, stacked offsets ----------
-   Each sticky row paints the same surface as the area it sits in (pane or
-   tray), plus the pane noise, so it is seamless yet fully opaque. */
+/* ---------- Sticky headings: fully opaque, stacked offsets ---------- */
 .sidebar-content details > summary {
   position: sticky;
   z-index: calc(5 - var(--wd-d));
@@ -298,20 +276,9 @@
   user-select: none;
   background:
     linear-gradient(var(--wd-row-tint, transparent), var(--wd-row-tint, transparent)),
-    var(--wd-row-base, var(--wd-sb-base));
-  background-color: var(--wd-row-base, var(--wd-sb-base));
-}
-/* Rows that sit on the pane itself (section headers and the first level of
-   groups) repeat its surface so a closed, untinted row blends in. */
-.sidebar-content ul.top-level > li > details > summary,
-.sidebar-content ul.top-level > li > details > ul > li > details > summary {
-  background:
-    linear-gradient(var(--wd-row-tint, transparent), var(--wd-row-tint, transparent)),
-    var(--wd-sb-noise) fixed,
-    radial-gradient(120% 55% at 0% 0%, color-mix(in srgb, var(--wd-accent) 9%, transparent), transparent 70%) fixed,
     var(--wd-grain) fixed,
-    var(--sl-color-bg-sidebar);
-  background-color: var(--sl-color-bg-sidebar);
+    var(--wd-sb-base);
+  background-color: var(--wd-sb-base);
 }
 .sidebar-content ul.top-level > li > details > summary {
   top: var(--wd-sb-toolbar-h);
@@ -320,22 +287,8 @@
   top: calc(var(--wd-sb-toolbar-h) + var(--wd-sb-head-h) + (var(--wd-d) - 1) * var(--wd-sb-group-h));
 }
 
-/* ---------- Trays ----------
-   Open groups one level down sit in a faint inset tray: depth you can feel
-   without a rule or an indent. Rows inside inherit the tray as their base. */
-.sidebar-content ul.top-level ul ul {
-  --wd-row-base: var(--wd-sb-tray);
-  --wd-sb-inset: 0.25rem;
-  margin-inline: 0.25rem;
-  padding-block: 0.25rem;
-  background: var(--wd-sb-tray);
-  border-radius: calc(var(--wd-sb-r) + 2px);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--wd-accent) 9%, transparent);
-}
-
 /* ==========================================================================
-   ROWS — links and nested group headings (level 1+)
-   One geometry for both: same fixed height, same text column, same radius.
+   L1+ — ROWS (links and group headings share one geometry)
    ========================================================================== */
 .sidebar-content a {
   display: block;
@@ -347,21 +300,17 @@
 
 .sidebar-content ul ul a,
 .sidebar-content ul ul details > summary {
-  --wd-pip: 0; /* indicator height, 0..1 of the row */
   --wd-row-tint: transparent;
   box-sizing: border-box;
   height: var(--wd-sb-row);
-  margin-inline: var(--wd-sb-inset);
   padding-block: 0;
-  padding-inline-start: calc(1.05rem + (var(--wd-d) - 1) * var(--wd-sb-step));
-  padding-inline-end: 0.7rem;
-  font-size: 0.85rem;
+  padding-inline-start: calc(var(--wd-sb-pad1) + (var(--wd-d) - 1) * var(--wd-sb-step));
+  padding-inline-end: var(--wd-sb-gutter);
+  font-size: 0.86rem;
   line-height: 1;
-  border-radius: var(--wd-sb-r);
   transition:
-    --wd-row-tint 140ms var(--wd-ease),
-    color 140ms var(--wd-ease),
-    transform 100ms var(--wd-ease);
+    --wd-row-tint 120ms var(--wd-ease),
+    color 120ms var(--wd-ease);
 }
 .sidebar-content ul ul a {
   display: flex;
@@ -373,103 +322,75 @@
   flex: 1 1 auto;
 }
 
-/* The pip: a slim indicator that grows into place on the row's left edge. */
-.sidebar-content ul ul a::before,
-.sidebar-content ul ul details > summary::before {
+/* Guides: one 1px line per ancestor level, at the text-start of that
+   ancestor. Painted per row, so they are unbroken and sit under sticky rows. */
+.sidebar-content ul ul ul a::before,
+.sidebar-content ul ul ul details > summary::before {
   content: '';
   position: absolute;
-  inset-inline-start: 4px;
-  inset-block-start: 50%;
-  width: 2px;
-  height: calc(var(--wd-pip) * 58%);
-  translate: 0 -50%;
-  border-radius: 2px;
-  background: var(--wd-accent-bright);
-  opacity: var(--wd-pip);
-  box-shadow: 0 0 10px 1px color-mix(in srgb, var(--wd-accent) 70%, transparent);
+  inset-block: 0;
+  inset-inline-start: var(--wd-sb-pad1);
+  width: calc((var(--wd-d) - 1) * var(--wd-sb-step));
+  background: repeating-linear-gradient(
+    90deg,
+    var(--wd-sb-guide) 0 1px,
+    transparent 1px var(--wd-sb-step)
+  );
   pointer-events: none;
-  transition:
-    height 180ms var(--wd-ease),
-    opacity 140ms var(--wd-ease);
 }
 
-/* ---------- Rank by light ----------
-   Parent rows: brighter ink + heavier weight. Leaves: quiet. */
+/* Parent rows: heavier, brighter. Closed = one notch dimmer than open. */
 .sidebar-content ul ul details > summary .large {
   font-family: var(--wd-font-body);
   font-size: inherit;
   font-weight: 600;
   line-height: 1;
-  letter-spacing: 0.005em;
+  letter-spacing: 0;
   text-transform: none;
-  color: var(--wd-paper);
+  color: color-mix(in srgb, var(--wd-paper) 82%, var(--wd-paper-dim));
 }
 
-/* OPEN parent: accent label, soft tint, short pip, accent caret. */
+/* OPEN parent: full-white label, accent caret, faint field, accent edge. */
 .sidebar-content ul ul details[open] > summary {
   --wd-row-tint: var(--wd-sb-open);
-  --wd-pip: 0.62;
 }
 .sidebar-content ul ul details[open] > summary .large {
-  color: var(--wd-accent-bright);
+  color: var(--wd-paper);
 }
 .sidebar-content ul ul details[open] > summary .caret {
-  color: var(--wd-accent-bright);
+  color: var(--wd-paper);
 }
 
 /* Hover */
 .sidebar-content ul ul a:hover,
 .sidebar-content ul ul details > summary:hover {
   --wd-row-tint: var(--wd-sb-hover);
-  color: var(--sl-color-white);
+  color: var(--wd-paper);
 }
 .sidebar-content ul ul details > summary:hover .large {
-  color: var(--sl-color-white);
-}
-.sidebar-content ul ul details[open] > summary:hover {
-  --wd-row-tint: color-mix(in srgb, var(--wd-accent) 13%, transparent);
-}
-.sidebar-content ul ul details[open] > summary:hover .large {
-  color: var(--wd-accent-bright);
-}
-.sidebar-content ul ul a:hover,
-.sidebar-content ul ul details:not([open]) > summary:hover {
-  --wd-pip: 0.3;
+  color: var(--wd-paper);
 }
 
-/* Press */
-.sidebar-content ul ul a:active,
-.sidebar-content ul ul details > summary:active {
-  transform: scale(0.985);
-}
-
-/* CURRENT PAGE: the brightest thing in the rail. */
+/* CURRENT PAGE: white label on a faint accent field with a solid accent bar. */
 .sidebar-content a[aria-current='page'],
 .sidebar-content a[aria-current='page']:hover,
 .sidebar-content a[aria-current='page']:focus {
   --wd-row-tint: var(--wd-sb-active);
-  --wd-pip: 1;
-  color: var(--wd-accent-bright);
-  font-weight: 500;
+  color: var(--wd-paper);
+  font-weight: 600;
+  box-shadow: inset 3px 0 0 var(--wd-accent);
 }
 
 .sidebar-content a:focus-visible,
 .sidebar-content summary:focus-visible {
-  outline: 2px solid var(--wd-accent-bright);
+  outline: 1px solid var(--wd-accent-bright);
   outline-offset: -2px;
-  border-radius: var(--wd-sb-r);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .sidebar-content ul ul a,
-  .sidebar-content ul ul details > summary,
-  .sidebar-content ul ul a::before,
-  .sidebar-content ul ul details > summary::before {
+  .sidebar-content ul ul details > summary {
     transition: none;
-  }
-  .sidebar-content ul ul a:active,
-  .sidebar-content ul ul details > summary:active {
-    transform: none;
   }
 }
 
@@ -498,7 +419,7 @@
   background: transparent;
   border-color: var(--wd-hairline-strong);
   color: var(--wd-muted);
-  border-radius: var(--wd-radius);
+  border-radius: 0;
 }
 
 /* Mobile menu: the preferences row (theme controls) lives inside the sidebar
