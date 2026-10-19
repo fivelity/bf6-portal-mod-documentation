@@ -213,8 +213,8 @@ importers:
         specifier: ^4.3.0
         version: 4.3.0
       bf6-portal-utils:
-        specifier: ^9.4.0
-        version: 9.4.0
+        specifier: ^10.0.0
+        version: 10.0.0
       starlight-llms-txt:
         specifier: ^0.12.0
         version: 0.12.0(@astrojs/markdown-satteri@0.4.1)(@astrojs/starlight@0.42.2(astro@7.3.3(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@types/node@24.13.6)(yaml@2.9.1))(typescript@5.9.3))(astro@7.3.3(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@types/node@24.13.6)(yaml@2.9.1))
@@ -1232,8 +1232,8 @@ packages:
     resolution: {integrity: sha512-06OxQNfbUXfY+XrILqSzH5BaFonXDs2Snw3F3jI5XR9RDvneyF5xkghQwapiMCww3ix8r2DRC9i30ztHwXMDEA==}
     engines: {node: '>=23.0.0'}
 
-  bf6-portal-utils@9.4.0:
-    resolution: {integrity: sha512-0IVyBsTQ7vkRqchGEiEyEZOKtbvwJwz8tFhHs3+d505oI/reTDYpv7Jh4v+xdSpJV9vU236zy049iZ8klMuw4Q==}
+  bf6-portal-utils@10.0.0:
+    resolution: {integrity: sha512-6qnzvvD6u3pRD23GV5MwH/VwoN2fGwcGStvgfj7HzHkWU7RFbG8/GAcYa2IFfD/BYDVenJKGVmuCg1TW04qbyw==}
     engines: {node: '>=24.0.0'}
 
   boolbase@1.0.0:
@@ -3494,7 +3494,7 @@ snapshots:
 
   bf6-portal-mod-types@4.3.0: {}
 
-  bf6-portal-utils@9.4.0: {}
+  bf6-portal-utils@10.0.0: {}
 
   boolbase@1.0.0: {}
 
