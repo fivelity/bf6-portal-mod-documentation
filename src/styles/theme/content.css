@@ -1,12 +1,12 @@
 /* ==========================================================================
-   WARDOGS THEME — 04 · CONTENT COMPONENTS
-   Tables, asides, code frames, Starlight <Card>/<LinkCard>/<Badge>/<Steps>/
-   <Tabs>/<FileTree>, and Expressive Code chrome.
+   CONTENT COMPONENTS — tables, asides, code frames, Starlight
+   <Card>/<LinkCard>/<Badge>/<Steps>/<Tabs>/<FileTree>, and the .wd-* raw-HTML
+   primitives (.wd-stats, .wd-kv, .wd-plate-grid). Palette-agnostic.
    ========================================================================== */
 
-/* ---------- Tables → "manifest" plates ---------- */
+/* ---------- Tables ---------- */
 .sl-markdown-content table {
-  display: block; /* enables horizontal scroll on narrow screens */
+  display: block;
   overflow-x: auto;
   width: 100%;
   border-collapse: collapse;
@@ -14,16 +14,16 @@
   border: 0;
 }
 .sl-markdown-content thead {
-  border-bottom: var(--wd-rule-strong);
+  border-bottom: var(--wd-thead-rule);
 }
 .sl-markdown-content th {
   font-family: var(--wd-font-mono);
-  font-size: 0.66rem;
+  font-size: 0.65rem;
   font-weight: 500;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   text-align: start;
-  color: var(--wd-muted);
+  color: var(--wd-th-color);
   padding: 0.55rem 1rem 0.55rem 0;
   background: none;
 }
@@ -41,53 +41,61 @@
   color: var(--sl-color-white);
   font-weight: 500;
 }
+/* Zebra striping: deliberate and uniform, so a long reference table (the
+   21-module list, say) reads as "every other row is tinted" rather than
+   leaving row shading to look like a stray hover state caught mid-screenshot. */
+.sl-markdown-content tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--wd-hairline) 40%, transparent);
+}
 .sl-markdown-content tbody tr {
   transition: background var(--wd-fast) var(--wd-ease);
 }
 .sl-markdown-content tbody tr:hover {
-  background: color-mix(in srgb, var(--wd-brass) 4%, transparent);
+  background: color-mix(in srgb, var(--wd-accent) 5%, transparent);
 }
 .sl-markdown-content td code {
   white-space: nowrap;
 }
 
-/* ---------- Asides → faction-coloured plates ----------
-   note = Lonestar blue · tip = Manticore green
-   caution = Brass · danger = Valkyra red                                  */
+/* ---------- Asides — note=info, tip=ok, caution=warn, danger=danger ---------- */
+/* One uniform 1px border + an inset rail. A thick border-inline-start on a
+   rounded box curves into a wedge at the corners; an inset shadow follows the
+   radius exactly, so the border renders cleanly on all four sides. */
 .starlight-aside {
+  --wd-aside-rail: var(--wd-hairline-strong);
   border: var(--wd-rule-strong);
-  border-inline-start-width: 3px;
-  border-radius: var(--wd-radius);
+  border-radius: var(--wd-radius-lg);
+  box-shadow: inset 3px 0 0 var(--wd-aside-rail);
   background: var(--wd-plate);
-  padding: 1rem 1.25rem;
+  padding: 1rem 1.25rem 1rem 1.4rem;
 }
 .starlight-aside--note {
-  border-inline-start-color: var(--wd-lonestar);
-  background: color-mix(in srgb, var(--wd-lonestar) 6%, var(--wd-plate));
+  --wd-aside-rail: var(--wd-info);
+  background: color-mix(in srgb, var(--wd-info) 7%, var(--wd-plate));
 }
 .starlight-aside--tip {
-  border-inline-start-color: var(--wd-manticore);
-  background: color-mix(in srgb, var(--wd-manticore) 6%, var(--wd-plate));
+  --wd-aside-rail: var(--wd-ok);
+  background: color-mix(in srgb, var(--wd-ok) 7%, var(--wd-plate));
 }
 .starlight-aside--caution {
-  border-inline-start-color: var(--wd-brass);
-  background: color-mix(in srgb, var(--wd-brass) 7%, var(--wd-plate));
+  --wd-aside-rail: var(--wd-warn);
+  background: color-mix(in srgb, var(--wd-warn) 8%, var(--wd-plate));
 }
 .starlight-aside--danger {
-  border-inline-start-color: var(--wd-valkyra);
-  background: color-mix(in srgb, var(--wd-valkyra) 7%, var(--wd-plate));
+  --wd-aside-rail: var(--wd-danger);
+  background: color-mix(in srgb, var(--wd-danger) 8%, var(--wd-plate));
 }
 .starlight-aside__title {
   font-family: var(--wd-font-mono);
   font-size: 0.7rem;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.11em;
   text-transform: uppercase;
 }
-.starlight-aside--note .starlight-aside__title { color: var(--wd-lonestar); }
-.starlight-aside--tip .starlight-aside__title { color: var(--wd-manticore); }
-.starlight-aside--caution .starlight-aside__title { color: var(--wd-brass-bright); }
-.starlight-aside--danger .starlight-aside__title { color: var(--wd-valkyra); }
+.starlight-aside--note .starlight-aside__title { color: var(--wd-info); }
+.starlight-aside--tip .starlight-aside__title { color: var(--wd-ok); }
+.starlight-aside--caution .starlight-aside__title { color: var(--wd-warn); }
+.starlight-aside--danger .starlight-aside__title { color: var(--wd-danger); }
 .starlight-aside__content {
   font-size: 0.92rem;
   color: var(--sl-color-text);
@@ -96,16 +104,16 @@
   background: var(--wd-code-bg);
 }
 
-/* ---------- Expressive Code frames ---------- */
+/* ---------- Expressive Code ---------- */
 .expressive-code {
-  --ec-brdRad: 2px;
+  --ec-brdRad: var(--wd-radius-lg);
   --ec-brdCol: var(--wd-hairline-strong);
   --ec-codeBg: var(--wd-code-bg);
   --ec-frm-edBg: var(--wd-code-bg);
   --ec-frm-trmTtbBg: var(--wd-plate);
   --ec-frm-edTabBarBg: var(--wd-plate);
   --ec-frm-edActTabBg: var(--wd-code-bg);
-  --ec-frm-edActTabIndTopCol: var(--wd-brass);
+  --ec-frm-edActTabIndTopCol: var(--wd-accent);
   --ec-frm-edActTabIndBtmCol: transparent;
   --ec-frm-edTabsMargBlkStart: 0;
   --ec-frm-shdw: none;
@@ -120,19 +128,20 @@
   border-radius: var(--wd-radius);
 }
 
-/* ---------- <Card> / <CardGrid> → hairline-gapped plate grid ---------- */
+/* ---------- <Card> / <CardGrid> ---------- */
 .sl-markdown-content .card-grid {
-  gap: 1px;
-  background: var(--wd-hairline);
-  border: var(--wd-rule);
+  gap: 0.75rem;
 }
 .card {
-  border: 0;
-  border-radius: 0;
+  border: var(--wd-rule-strong);
+  border-radius: var(--wd-radius-lg);
   background: var(--wd-plate);
   padding: 1.25rem 1.3rem 1.15rem;
   position: relative;
-  transition: background var(--wd-fast) var(--wd-ease);
+  overflow: hidden; /* clips the accent rail to the rounded corners */
+  transition:
+    background var(--wd-fast) var(--wd-ease),
+    border-color var(--wd-fast) var(--wd-ease);
 }
 .card::before {
   content: '';
@@ -140,41 +149,41 @@
   inset-block: 0;
   inset-inline-start: 0;
   width: 3px;
-  background: var(--wd-brass);
-  opacity: 0.65;
+  background: var(--wd-accent);
+  opacity: 0.7;
 }
 .card:hover {
   background: var(--wd-plate-hover);
+  border-color: color-mix(in srgb, var(--wd-accent) 45%, var(--wd-hairline-strong));
 }
 .card .title {
   font-family: var(--wd-font-display);
-  font-weight: 800;
-  font-size: 1.4rem;
-  letter-spacing: 0.01em;
+  font-weight: var(--wd-card-title-weight);
+  font-size: var(--wd-card-title-size);
+  letter-spacing: 0.012em;
+  text-transform: var(--wd-heading-transform);
 }
 .card .icon {
   border: var(--wd-rule-strong);
   border-radius: var(--wd-radius);
-  background: var(--wd-brass-deep);
-  color: var(--wd-brass-bright);
+  background: var(--wd-accent-deep);
+  color: var(--wd-accent-bright);
   padding: 0.2em;
 }
-:root[data-theme='light'] .card .icon {
-  background: #f1e6bd;
-  color: #6f5710;
-}
-/* Each card in a grid gets a faction rail, cycling blue → green → red → brass */
+/* Cycle rails across a grid: accent -> info -> ok -> warn */
 .card-grid > :nth-child(4n + 1) .card::before,
-.card-grid > .card:nth-child(4n + 1)::before { background: var(--wd-lonestar); }
+.card-grid > .card:nth-child(4n + 1)::before { background: var(--wd-rail-1); }
 .card-grid > :nth-child(4n + 2) .card::before,
-.card-grid > .card:nth-child(4n + 2)::before { background: var(--wd-manticore); }
+.card-grid > .card:nth-child(4n + 2)::before { background: var(--wd-rail-2); }
 .card-grid > :nth-child(4n + 3) .card::before,
-.card-grid > .card:nth-child(4n + 3)::before { background: var(--wd-valkyra); }
+.card-grid > .card:nth-child(4n + 3)::before { background: var(--wd-rail-3); }
+.card-grid > :nth-child(4n + 4) .card::before,
+.card-grid > .card:nth-child(4n + 4)::before { background: var(--wd-rail-4); }
 
 /* ---------- <LinkCard> ---------- */
 .sl-link-card {
   border: var(--wd-rule-strong);
-  border-radius: var(--wd-radius);
+  border-radius: var(--wd-radius-lg);
   background: var(--wd-plate);
   box-shadow: none;
   transition:
@@ -182,47 +191,40 @@
     background var(--wd-fast) var(--wd-ease);
 }
 .sl-link-card:hover {
-  border-color: var(--wd-brass);
+  border-color: var(--wd-accent);
   background: var(--wd-plate-hover);
 }
 .sl-link-card .title {
   font-family: var(--wd-font-display);
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.15rem;
+  text-transform: var(--wd-heading-transform);
 }
 
-/* ---------- <Badge> → status chips ---------- */
+/* ---------- <Badge> ---------- */
 .sl-badge {
   font-family: var(--wd-font-mono);
-  font-size: 0.66rem;
+  font-size: 0.65rem;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   border-radius: var(--wd-radius);
   padding: 0.1em 0.55em;
 }
 .sl-badge.default {
-  background: var(--wd-brass-deep);
-  border-color: var(--wd-brass);
-  color: var(--wd-brass-bright);
-}
-:root[data-theme='light'] .sl-badge.default {
-  background: #f1e6bd;
-  color: #6f5710;
+  background: var(--wd-accent-deep);
+  border-color: var(--wd-accent);
+  color: var(--wd-accent-bright);
 }
 
-/* ---------- <Steps> → numbered brass rail ---------- */
+/* ---------- <Steps> ---------- */
 .sl-steps > li::before {
   font-family: var(--wd-font-mono);
   font-weight: 600;
   border-radius: var(--wd-radius);
-  background: var(--wd-brass-deep);
-  color: var(--wd-brass-bright);
-  border: 1px solid var(--wd-brass);
-}
-:root[data-theme='light'] .sl-steps > li::before {
-  background: #f1e6bd;
-  color: #6f5710;
+  background: var(--wd-accent-deep);
+  color: var(--wd-accent-bright);
+  border: 1px solid var(--wd-accent);
 }
 .sl-steps > li::after {
   background: var(--wd-hairline-strong);
@@ -231,12 +233,13 @@
 /* ---------- <Tabs> ---------- */
 starlight-tabs [role='tab'] {
   font-family: var(--wd-font-mono);
-  font-size: 0.78rem;
-  letter-spacing: 0.02em;
+  font-size: 0.77rem;
+  letter-spacing: 0.03em;
+  text-transform: var(--wd-heading-transform);
 }
 starlight-tabs [role='tab'][aria-selected='true'] {
-  color: var(--wd-brass-bright);
-  border-bottom-color: var(--wd-brass);
+  color: var(--wd-accent-bright);
+  border-bottom-color: var(--wd-accent);
 }
 starlight-tabs .tablist-wrapper {
   border-bottom-color: var(--wd-hairline-strong);
@@ -244,23 +247,18 @@ starlight-tabs .tablist-wrapper {
 
 /* ---------- <FileTree> ---------- */
 starlight-file-tree {
-  border-radius: var(--wd-radius);
+  border-radius: var(--wd-radius-lg);
   font-family: var(--wd-font-mono);
   font-size: 0.82rem;
   background: var(--wd-code-bg);
   border: var(--wd-rule-strong);
 }
 
-/* ---------- Manifest primitives (opt-in via raw HTML in .mdx) ----------
-   Usage in MDX:
-     <div class="wd-stats">
-       <div class="wd-stat"><b>431</b><span>Functions</span></div> …
-     </div>
-   Also: .wd-kv (key/value plate), .wd-plate-grid, .wd-doc-number.        */
+/* ---------- Raw-HTML primitives (opt-in via .mdx) ---------- */
 .wd-doc-number {
   font-family: var(--wd-font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--sl-color-accent);
   margin-bottom: 0.4rem;
@@ -272,22 +270,26 @@ starlight-file-tree {
   gap: 1px;
   background: var(--wd-hairline);
   border: var(--wd-rule);
+  border-radius: var(--wd-radius-lg);
+  overflow: hidden;
   margin-block: 1.5rem;
 }
 .wd-stat {
   background: var(--wd-plate);
   padding: 1rem 1rem 0.85rem;
+  position: relative;
 }
 .wd-stat b {
   display: block;
   font-family: var(--wd-font-mono);
-  font-size: 1.45rem;
+  font-size: 1.42rem;
   font-weight: 700;
-  color: var(--wd-brass-bright);
+  color: var(--wd-accent-bright);
+  font-variant-numeric: tabular-nums;
 }
 .wd-stat span {
-  font-size: 0.68rem;
-  letter-spacing: 0.06em;
+  font-size: 0.67rem;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--wd-muted);
 }
@@ -298,6 +300,8 @@ starlight-file-tree {
   gap: 1px;
   background: var(--wd-hairline);
   border: var(--wd-rule);
+  border-radius: var(--wd-radius-lg);
+  overflow: hidden;
   margin-block: 1.5rem;
 }
 .wd-plate {
@@ -311,19 +315,20 @@ starlight-file-tree {
   inset-block: 0;
   inset-inline-start: 0;
   width: 3px;
-  background: var(--wd-brass);
+  background: var(--wd-accent);
 }
-.wd-plate.is-blue::before { background: var(--wd-lonestar); }
-.wd-plate.is-green::before { background: var(--wd-manticore); }
-.wd-plate.is-red::before { background: var(--wd-valkyra); }
+.wd-plate.is-info::before { background: var(--wd-info); }
+.wd-plate.is-ok::before { background: var(--wd-ok); }
+.wd-plate.is-danger::before { background: var(--wd-danger); }
 .wd-plate h4 {
   margin: 0.2rem 0 0.4rem;
-  font-size: 1.4rem;
+  font-size: 1.32rem;
+  text-transform: var(--wd-heading-transform);
 }
 .wd-plate .wd-tag {
   font-family: var(--wd-font-mono);
-  font-size: 0.66rem;
-  letter-spacing: 0.08em;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--wd-muted);
 }
@@ -331,6 +336,8 @@ starlight-file-tree {
 .wd-kv {
   margin-block: 1.25rem;
   border: var(--wd-rule);
+  border-radius: var(--wd-radius-lg);
+  overflow: hidden;
   background: var(--wd-plate);
 }
 .wd-kv > div {

@@ -1,0 +1,34 @@
+---
+/*
+ * Footer override.
+ *
+ * Wraps Starlight's default Footer unmodified, then appends:
+ *   1. an SDK-version line ("SDK 1.4.3.0 · mod-types 4.3.0 · utils 9.4.0"),
+ *      read from sdk-info.ts (never hand-typed);
+ *   2. the existing disclaimer callout, unchanged in substance.
+ */
+import Default from '@astrojs/starlight/components/Footer.astro';
+import { sdkStats, formatCount } from '../data/sdk-info';
+---
+
+<Default {...Astro.props}><slot /></Default>
+<div class="wd-footer-sdk">
+  <p>
+    Documenting <strong>Official BF6 Portal SDK {sdkStats.sdkVersion}</strong>
+    &nbsp;·&nbsp; <code>bf6-portal-mod-types@{sdkStats.modTypesVersion}</code>
+    &nbsp;·&nbsp; <code>bf6-portal-utils@{sdkStats.utilsVersion}</code>
+    &nbsp;·&nbsp; {formatCount(sdkStats.functions)} functions, {formatCount(sdkStats.enums)} enums,{' '}
+    {formatCount(sdkStats.typeAliases)} type aliases, {sdkStats.utilsModules} utils modules
+  </p>
+</div>
+<div class="wd-footer-disclaimer">
+  <p>
+    These docs are generated from the community npm packages
+    <code>bf6-portal-mod-types</code> and <code>bf6-portal-utils</code>.
+    Accuracy tracks those packages' current versions — if something here
+    doesn't match what you see in-game, check the
+    <a href="https://portal.battlefield.com/" target="_blank" rel="noopener noreferrer">official Portal documentation</a>
+    before assuming a bug. This is a community resource and is not
+    affiliated with, endorsed by, or associated with EA or DICE.
+  </p>
+</div>

@@ -1,0 +1,34 @@
+---
+/**
+ * SocialIcons override — the left half of the header's right-hand cluster.
+ *
+ * Order, left to right:  SDK version  →  Build info  →  GitHub
+ * (the theme palette + light/dark controls follow, from ThemeSelect.astro).
+ *
+ * The two hovercards are React islands; hovering and focus work from CSS
+ * alone, so they are useful before hydration. GitHub is Starlight's own
+ * social-link renderer, untouched.
+ */
+import Default from '@astrojs/starlight/components/SocialIcons.astro';
+import { SdkVersion } from './header/SdkVersion';
+import { BuildInfo } from './header/BuildInfo';
+import { sdkStats } from '../data/sdk-info';
+import { buildInfo } from '../data/build-info';
+---
+
+<div class="wd-header-meta">
+  <SdkVersion
+    client:idle
+    sdkVersion={sdkStats.sdkVersion}
+    modTypesVersion={sdkStats.modTypesVersion}
+    utilsVersion={sdkStats.utilsVersion}
+  />
+  <BuildInfo
+    client:idle
+    tool={buildInfo.tool}
+    model={buildInfo.model}
+    elapsedLabel={buildInfo.elapsedLabel}
+    elapsedTitle={buildInfo.elapsedTitle}
+  />
+</div>
+<Default {...Astro.props}><slot /></Default>

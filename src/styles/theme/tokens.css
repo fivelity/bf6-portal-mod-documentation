@@ -1,47 +1,62 @@
 /* ==========================================================================
-   WARDOGS THEME — 01 · TOKENS
-   Source of truth: wardogs-operations-manifest.html
-   Palette: dark canvas, warm paper text, brass accent, faction colours.
-   Everything below maps the manifest palette onto Starlight's own custom
-   properties so every built-in component inherits it for free.
+   TOKENS — shared across every palette
+   Palette files (theme/palettes/*.css) supply COLOUR values only. This file
+   holds everything that never changes between palettes: type, shape, motion,
+   heading scale, status colours, the film-grain texture, and the ONE mapping
+   onto Starlight's custom properties so every built-in Starlight component
+   inherits the active palette.
    ========================================================================== */
 
 :root {
-  /* --- Manifest palette (dark) --- */
-  --wd-bg: #100f0c;
-  --wd-bg-raised: #17150f;
-  --wd-bg-inset: #0b0a08;
-  --wd-paper: #e8e3d5;
-  --wd-paper-dim: #a8a08c;
-  --wd-muted: #726b5b;
-  --wd-hairline: #332f26;
-  --wd-hairline-strong: #4a4433;
-
-  --wd-brass: #c9a227;
-  --wd-brass-bright: #e0b940;
-  --wd-brass-deep: #3a3015;
-
-  /* Faction colours double as semantic colours for asides / badges */
-  --wd-lonestar: #4f8ce8; /* info  */
-  --wd-manticore: #3fbf5e; /* ok    */
-  --wd-valkyra: #e8543f; /* warn  */
-  --wd-danger: #c1392b;
-
   /* --- Type --- */
-  --wd-font-display: 'Big Shoulders Display Variable', 'Big Shoulders Display',
-    'Arial Narrow', Impact, sans-serif;
+  --wd-font-display: 'Oswald Variable', 'Oswald', 'Arial Narrow', Impact, sans-serif;
   --wd-font-body: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --wd-font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, SFMono-Regular,
-    Menlo, Consolas, monospace;
+  --wd-font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo,
+    Consolas, monospace;
 
-  /* --- Shape: manifest plates are square, never pill-shaped --- */
-  --wd-radius: 2px;
+  /* --- Shape: standard rounded corners everywhere, no clipped corners --- */
+  --wd-radius: 4px;
+  --wd-radius-lg: 6px;
+
+  /* --- Headings --- */
+  --wd-heading-transform: uppercase;
+  --wd-heading-weight: 600;
+  --wd-heading-weight-sub: 600;
+  --wd-heading-tracking: 0.015em;
+  --wd-h1-size: clamp(2.1rem, 4.4vw, 3.1rem);
+  --wd-h1-leading: 0.98;
+  --wd-h2-size: clamp(1.6rem, 2.6vw, 2.15rem);
+  --wd-h2-leading: 1.05;
+  --wd-h3-size: 1.28rem;
+  --wd-h4-size: 1.02rem;
+  --wd-h2-rail: 3px;
+  --wd-h2-pad: 0.8rem;
+  --wd-title-size: 1.35rem;
+  --wd-title-weight: 700;
+
+  --wd-hero-size: clamp(3rem, 8vw, 5.75rem);
+  --wd-hero-weight: 700;
+  --wd-hero-leading: 0.9;
+  --wd-hero-eyebrow: '[ BATTLEFIELD 6 · PORTAL SDK REFERENCE ]';
+
+  --wd-card-title-size: 1.25rem;
+  --wd-card-title-weight: 700;
+  --wd-thead-rule: 2px solid var(--wd-accent);
+  --wd-th-color: var(--wd-accent);
+  --wd-inline-code-border: 1px solid color-mix(in srgb, var(--wd-accent) 25%, transparent);
+  --wd-focus-halo: 0 0 0 4px color-mix(in srgb, var(--wd-accent) 20%, transparent);
+  --wd-ref-def-prefix: '// ';
+
+  /* --- Rules --- */
   --wd-rule: 1px solid var(--wd-hairline);
   --wd-rule-strong: 1px solid var(--wd-hairline-strong);
 
   /* --- Motion --- */
-  --wd-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --wd-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --wd-fast: 0.15s;
+
+  /* --- Sidebar geometry (used by components/sidebar.css) --- */
+  --wd-sb-toolbar-h: 3.5rem;
 
   /* --- Starlight: type + layout --- */
   --sl-font: var(--wd-font-body);
@@ -49,137 +64,96 @@
   --sl-line-height: 1.65;
   --sl-line-height-headings: 1;
   --sl-content-width: 46rem;
-  --sl-sidebar-width: 18.5rem;
+  --sl-sidebar-width: 20rem;
   --sl-nav-height: 3.75rem;
   --sl-text-code: 0.86rem;
-}
 
-/* ===== Dark (default) ===== */
-:root,
-:root[data-theme='dark'] {
+  /* --- Starlight: palette mapping (resolves per-palette, per-mode) --- */
   --sl-color-black: var(--wd-bg);
   --sl-color-white: var(--wd-paper);
   --sl-color-gray-1: var(--wd-paper);
   --sl-color-gray-2: var(--wd-paper-dim);
-  --sl-color-gray-3: #8a8371;
+  --sl-color-gray-3: var(--wd-gray-3);
   --sl-color-gray-4: var(--wd-muted);
   --sl-color-gray-5: var(--wd-hairline-strong);
   --sl-color-gray-6: var(--wd-hairline);
+  --sl-color-gray-7: var(--wd-gray-7);
 
   --sl-color-text: var(--wd-paper-dim);
-  --sl-color-text-accent: var(--wd-brass-bright);
+  --sl-color-text-accent: var(--wd-accent-bright);
   --sl-color-text-invert: var(--wd-bg);
 
   --sl-color-bg: var(--wd-bg);
   --sl-color-bg-nav: var(--wd-bg-inset);
   --sl-color-bg-sidebar: var(--wd-bg-inset);
-  --sl-color-bg-inline-code: rgba(255, 255, 255, 0.06);
-  --sl-color-bg-accent: var(--wd-brass);
+  --sl-color-bg-inline-code: var(--wd-inline-code-bg);
+  --sl-color-bg-accent: var(--wd-accent);
 
-  --sl-color-accent-low: var(--wd-brass-deep);
-  --sl-color-accent: var(--wd-brass);
-  --sl-color-accent-high: var(--wd-brass-bright);
+  --sl-color-accent-low: var(--wd-accent-deep);
+  --sl-color-accent: var(--wd-accent);
+  --sl-color-accent-high: var(--wd-accent-bright);
 
   --sl-color-hairline: var(--wd-hairline);
   --sl-color-hairline-light: var(--wd-hairline-strong);
   --sl-color-hairline-shade: var(--wd-bg-inset);
-  --sl-color-backdrop-overlay: rgba(11, 10, 8, 0.78);
+  --sl-color-backdrop-overlay: var(--wd-backdrop);
 
-  /* Semantic scales: note=lonestar, tip=manticore, caution=brass, danger=valkyra */
-  --sl-color-blue: var(--wd-lonestar);
-  --sl-color-blue-low: #142033;
-  --sl-color-blue-high: #a9c8f5;
-  --sl-color-green: var(--wd-manticore);
-  --sl-color-green-low: #14261a;
-  --sl-color-green-high: #a6e3b5;
-  --sl-color-orange: var(--wd-brass);
-  --sl-color-orange-low: #2b2410;
-  --sl-color-orange-high: #f0d47a;
-  --sl-color-red: var(--wd-valkyra);
-  --sl-color-red-low: #33150f;
-  --sl-color-red-high: #f4a99d;
-  --sl-color-purple: var(--wd-brass);
-  --sl-color-purple-low: #2b2410;
-  --sl-color-purple-high: #f0d47a;
+  --sl-color-blue: var(--wd-info);
+  --sl-color-blue-low: var(--wd-info-low);
+  --sl-color-blue-high: var(--wd-info-high);
+  --sl-color-green: var(--wd-ok);
+  --sl-color-green-low: var(--wd-ok-low);
+  --sl-color-green-high: var(--wd-ok-high);
+  --sl-color-orange: var(--wd-warn);
+  --sl-color-orange-low: var(--wd-warn-low);
+  --sl-color-orange-high: var(--wd-warn-high);
+  --sl-color-red: var(--wd-danger);
+  --sl-color-red-low: var(--wd-danger-low);
+  --sl-color-red-high: var(--wd-danger-high);
+  --sl-color-purple: var(--wd-accent);
+  --sl-color-purple-low: var(--wd-accent-deep);
+  --sl-color-purple-high: var(--wd-accent-bright);
 
   --sl-shadow-sm: none;
   --sl-shadow-md: 0 0 0 1px var(--wd-hairline-strong);
-  --sl-shadow-lg: 0 18px 40px rgba(0, 0, 0, 0.55), 0 0 0 1px var(--wd-hairline-strong);
-
-  /* Theme-only helpers used by the rest of the theme */
-  --wd-canvas-glow-a: rgba(201, 162, 39, 0.045);
-  --wd-canvas-glow-b: rgba(79, 140, 232, 0.04);
-  --wd-plate: var(--wd-bg-inset);
-  --wd-plate-hover: var(--wd-bg-raised);
-  --wd-code-bg: #0d0c09;
-  --wd-scanline: rgba(0, 0, 0, 0.12);
+  --sl-shadow-lg: var(--wd-shadow-lg);
 }
 
-/* ===== Light: paper-forward inversion, same brass identity ===== */
+/* --------------------------------------------------------------------------
+   Status colours — shared by every palette so asides, badges and callouts
+   keep their meaning (info / ok / warn / danger) whichever accent is active.
+   -------------------------------------------------------------------------- */
+:root {
+  --wd-info: #3fa9f5;
+  --wd-ok: #5ad46a;
+  --wd-warn: #ff9c2e;
+  --wd-danger: #ff4a3d;
+  --wd-info-low: #0f2438;   --wd-info-high: #a9d4f5;
+  --wd-ok-low: #12281a;     --wd-ok-high: #a8ecb2;
+  --wd-warn-low: #2e1f0a;   --wd-warn-high: #ffd199;
+  --wd-danger-low: #331410; --wd-danger-high: #ffb3ab;
+
+  --wd-rail-1: var(--wd-accent);
+  --wd-rail-2: var(--wd-info);
+  --wd-rail-3: var(--wd-ok);
+  --wd-rail-4: var(--wd-warn);
+
+  /* Film grain: faint white specks on dark surfaces (alpha is baked into the
+     SVG). Used as a background layer only — never over text — so it can't
+     hurt legibility. */
+  --wd-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n' x='0' y='0' width='100%25' height='100%25'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.04 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
 :root[data-theme='light'] {
-  --sl-color-black: #f4f1e8;
-  --sl-color-white: #1c1a15;
-  --sl-color-gray-1: #211f19;
-  --sl-color-gray-2: #3c382d;
-  --sl-color-gray-3: #5b5748;
-  --sl-color-gray-4: #857f6c;
-  --sl-color-gray-5: #cfc9b6;
-  --sl-color-gray-6: #e6e1d1;
-  --sl-color-gray-7: #efebde;
+  --wd-info: #174f85;
+  --wd-ok: #0f5a28;
+  --wd-warn: #7a4206;
+  --wd-danger: #96281a;
+  --wd-info-low: #b4cadf;   --wd-info-high: #0f3860;
+  --wd-ok-low: #b0d4ba;     --wd-ok-high: #0e4623;
+  --wd-warn-low: #dcc7a0;   --wd-warn-high: #5a3207;
+  --wd-danger-low: #dfb9b2; --wd-danger-high: #5e1a12;
 
-  --sl-color-text: #3c382d;
-  --sl-color-text-accent: #6f5710;
-  --sl-color-text-invert: #f4f1e8;
-
-  --sl-color-bg: #f4f1e8;
-  --sl-color-bg-nav: #fbf9f2;
-  --sl-color-bg-sidebar: #fbf9f2;
-  --sl-color-bg-inline-code: rgba(16, 15, 12, 0.06);
-  --sl-color-bg-accent: var(--wd-brass);
-
-  --sl-color-accent-low: #f1e6bd;
-  --sl-color-accent: #b08d1c;
-  --sl-color-accent-high: #6f5710;
-
-  --sl-color-hairline: #ddd6c1;
-  --sl-color-hairline-light: #cfc9b6;
-  --sl-color-hairline-shade: #ddd6c1;
-  --sl-color-backdrop-overlay: rgba(60, 56, 45, 0.55);
-
-  --sl-color-blue: #2f66c2;
-  --sl-color-blue-low: #dfe8f7;
-  --sl-color-blue-high: #1b3f7a;
-  --sl-color-green: #23913f;
-  --sl-color-green-low: #dcefe1;
-  --sl-color-green-high: #145a27;
-  --sl-color-orange: #b08d1c;
-  --sl-color-orange-low: #f3e9c4;
-  --sl-color-orange-high: #5c4809;
-  --sl-color-red: #c8432f;
-  --sl-color-red-low: #f6ddd7;
-  --sl-color-red-high: #7a2418;
-  --sl-color-purple: #b08d1c;
-  --sl-color-purple-low: #f3e9c4;
-  --sl-color-purple-high: #5c4809;
-
-  --sl-shadow-sm: none;
-  --sl-shadow-md: 0 0 0 1px #cfc9b6;
-  --sl-shadow-lg: 0 18px 40px rgba(60, 56, 45, 0.18), 0 0 0 1px #cfc9b6;
-
-  --wd-canvas-glow-a: rgba(176, 141, 28, 0.06);
-  --wd-canvas-glow-b: rgba(47, 102, 194, 0.045);
-  --wd-plate: #fbf9f2;
-  --wd-plate-hover: #ffffff;
-  --wd-code-bg: #fbf9f2;
-  --wd-scanline: rgba(16, 15, 12, 0.05);
-
-  /* Re-point the raw manifest tokens so components that use them adapt */
-  --wd-paper: #1c1a15;
-  --wd-paper-dim: #3c382d;
-  --wd-muted: #857f6c;
-  --wd-hairline: #ddd6c1;
-  --wd-hairline-strong: #cfc9b6;
-  --wd-bg-inset: #fbf9f2;
-  --wd-bg-raised: #ffffff;
-  --wd-brass-bright: #6f5710;
+  /* Same grain, dark specks for light surfaces. */
+  --wd-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n' x='0' y='0' width='100%25' height='100%25'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.055 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }

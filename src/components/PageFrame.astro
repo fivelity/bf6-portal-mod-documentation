@@ -1,0 +1,21 @@
+---
+/**
+ * PageFrame override.
+ *
+ * Wraps Starlight's own PageFrame unchanged (header, sidebar, scroll frame)
+ * and appends the site footer inside `.main-frame`. That is the one place
+ * the footer can span the full width of the reading area — beyond the
+ * 46rem content column — while staying beside the fixed sidebar.
+ * Starlight's own <Footer> (edit link, last-updated, prev/next) stays in
+ * the content column where it belongs.
+ */
+import Default from '@astrojs/starlight/components/PageFrame.astro';
+import SiteFooter from './SiteFooter.astro';
+---
+
+<Default {...Astro.props}>
+  <slot name="header" slot="header" />
+  <slot name="sidebar" slot="sidebar" />
+  <slot />
+  <SiteFooter />
+</Default>

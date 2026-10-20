@@ -1,17 +1,13 @@
 /* ==========================================================================
-   WARDOGS THEME — 06 · API REFERENCE
-   typedoc-plugin-markdown emits dense parameter tables, long signatures and
-   deep heading trees. These rules keep them scannable.
-   Pages under /reference/ are tagged by the MarkdownContent override, which
-   sets `data-section="reference"` on `.sl-markdown-content`.
+   API REFERENCE — typedoc-plugin-markdown output: dense parameter tables,
+   long signatures, deep heading trees. Tagged by MarkdownContent.astro via
+   [data-section='reference']. Palette-agnostic.
    ========================================================================== */
 
-/* Tighter rhythm: reference pages are lookup tables, not prose */
 [data-section='reference'] {
   --sl-content-gap-y: 0.8rem;
 }
 
-/* Headings in generated pages are symbol names → mono, not display */
 [data-section='reference'] h2,
 [data-section='reference'] h3,
 [data-section='reference'] h4 {
@@ -20,54 +16,56 @@
   letter-spacing: 0;
   line-height: 1.25;
   word-break: break-word;
+  text-transform: none; /* symbol names stay as-cased */
 }
 [data-section='reference'] h2 {
-  font-size: 1.3rem;
+  font-size: 1.28rem;
+}
+[data-section='reference'] .sl-heading-wrapper.level-h2,
+[data-section='reference'] > h2 {
+  padding-inline-start: 0.7rem;
 }
 [data-section='reference'] h3 {
-  font-size: 1.08rem;
-  color: var(--wd-brass-bright);
+  font-size: 1.05rem;
+  color: var(--wd-accent-bright);
 }
 [data-section='reference'] h4 {
-  font-size: 0.92rem;
+  font-size: 0.9rem;
 }
 [data-section='reference'] h5 {
   margin-top: 1.4rem;
 }
 
-/* Parameter / property tables: compact, mono first column */
 [data-section='reference'] table {
   font-size: 0.84rem;
+  max-width: 100%;
 }
 [data-section='reference'] td:first-child code,
 [data-section='reference'] td:first-child {
   font-family: var(--wd-font-mono);
   font-size: 0.82rem;
-  color: var(--wd-brass-bright);
+  color: var(--wd-accent-bright);
 }
 [data-section='reference'] td {
   padding-block: 0.55rem;
 }
 
-/* Signature blocks */
 [data-section='reference'] .expressive-code {
   margin-block: 0.75rem;
 }
 
-/* Breadcrumb-style "Defined in" / "Returns" lines */
+/* "Defined in" / "Returns" lines */
 [data-section='reference'] p > em:only-child {
   font-family: var(--wd-font-mono);
   font-size: 0.72rem;
   color: var(--wd-muted);
 }
-
-/* Deprecated / experimental markers TypeDoc emits as blockquotes */
-[data-section='reference'] blockquote {
-  font-size: 0.86rem;
-  border-inline-start-color: var(--wd-hairline-strong);
+[data-section='reference'] p > em:only-child::before {
+  content: var(--wd-ref-def-prefix);
+  color: var(--wd-hairline-strong);
 }
 
-/* Long enum lists (83 enums × many members): let tables breathe horizontally */
-[data-section='reference'] table {
-  max-width: 100%;
+[data-section='reference'] blockquote {
+  font-size: 0.86rem;
+  box-shadow: inset 3px 0 0 var(--wd-hairline-strong);
 }

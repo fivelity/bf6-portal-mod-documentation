@@ -1,0 +1,129 @@
+/* ==========================================================================
+   SITE FOOTER — one full-width footer rendered by SiteFooter.astro (via the
+   PageFrame override). Spans the whole reading area, sits flush at the
+   bottom of short pages, and reads the same tokens as the rest of the theme.
+   Palette-agnostic.
+   ========================================================================== */
+
+/* Let the footer sit at the bottom of short pages instead of floating. */
+.main-frame {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.main-frame > .wd-site-footer {
+  margin-top: auto;
+}
+
+.wd-site-footer {
+  position: relative;
+  margin-top: 4rem;
+  border-top: var(--wd-rule);
+  background:
+    var(--wd-grain) fixed,
+    linear-gradient(0deg, color-mix(in srgb, var(--wd-accent) 4%, var(--wd-bg-inset)), var(--wd-bg-inset) 80%);
+  background-color: var(--wd-bg-inset);
+}
+/* Accent hairline on the top edge, fading out toward both ends. */
+.wd-site-footer::before {
+  content: '';
+  position: absolute;
+  inset: -1px 0 auto;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--wd-accent) 45%, transparent) 50%, transparent);
+}
+
+.wd-site-footer__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem var(--sl-content-pad-x, 1.5rem) 1.25rem;
+}
+
+.wd-site-footer__top,
+.wd-site-footer__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+}
+.wd-site-footer__bottom {
+  padding-top: 1rem;
+  border-top: var(--wd-rule);
+}
+
+.wd-site-footer__brand {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.9rem;
+  margin: 0;
+}
+.wd-site-footer__name {
+  font-family: var(--wd-font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--sl-color-white);
+}
+.wd-site-footer__tagline {
+  font-size: 0.8rem;
+  color: var(--wd-muted);
+}
+
+.wd-site-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.5rem;
+}
+.wd-site-footer__links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  padding: 0.3rem 0.55rem;
+  border-radius: var(--wd-radius);
+  font-family: var(--wd-font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.02em;
+  color: var(--wd-paper-dim);
+  text-decoration: none;
+  transition:
+    color var(--wd-fast) var(--wd-ease),
+    background var(--wd-fast) var(--wd-ease);
+}
+.wd-site-footer__links a:hover {
+  color: var(--wd-accent-bright);
+  background: color-mix(in srgb, var(--wd-accent) 10%, transparent);
+}
+.wd-site-footer__links svg {
+  width: 0.8em;
+  height: 0.8em;
+  opacity: 0.7;
+}
+
+.wd-site-footer__bottom p {
+  margin: 0;
+  font-size: 0.74rem;
+  color: var(--wd-muted);
+}
+.wd-site-footer__versions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.1rem;
+  font-family: var(--wd-font-mono);
+}
+.wd-site-footer__versions b {
+  margin-inline-start: 0.2em;
+  font-weight: 600;
+  color: var(--wd-accent-bright);
+  font-variant-numeric: tabular-nums;
+}
+
+@media print {
+  .wd-site-footer {
+    display: none;
+  }
+}

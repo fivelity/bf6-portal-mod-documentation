@@ -1,9 +1,9 @@
 /* ==========================================================================
-   WARDOGS THEME — 02 · BASE
-   Typography, canvas, focus, selection, scrollbars, reduced motion.
-   These rules are UNLAYERED on purpose: Starlight ships everything inside
-   `@layer starlight.*`, and unlayered CSS always wins over layered CSS, so
-   no `!important` is ever needed anywhere in this theme.
+   BASE — typography, canvas, focus, selection, scrollbars, reduced motion.
+   Palette-agnostic: reads --wd-* tokens only, so it renders identically
+   under any palette in src/styles/theme/palettes/*.css.
+   Unlayered on purpose: Starlight ships everything inside @layer
+   starlight.*, and unlayered CSS always wins without !important anywhere.
    ========================================================================== */
 
 html {
@@ -21,8 +21,8 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Subtle canvas texture — two soft radial glows, fixed, non-interactive.
-   Painted on a pseudo-element so it never affects layout or paint of content. */
+/* Canvas: soft accent glows plus a faint film grain, painted on a fixed layer
+   BEHIND the content. No grid, no overlay on top of text. */
 body::before {
   content: '';
   position: fixed;
@@ -30,23 +30,24 @@ body::before {
   z-index: -1;
   pointer-events: none;
   background-image:
-    radial-gradient(circle at 20% 12%, var(--wd-canvas-glow-a), transparent 45%),
-    radial-gradient(circle at 88% 82%, var(--wd-canvas-glow-b), transparent 45%);
+    var(--wd-grain),
+    radial-gradient(60rem 36rem at 12% -6%, var(--wd-glow-a), transparent 70%),
+    radial-gradient(48rem 32rem at 100% 100%, var(--wd-glow-b), transparent 70%);
 }
 
 ::selection {
-  background: var(--wd-brass);
-  color: #100f0c;
+  background: var(--wd-accent);
+  color: var(--wd-on-accent);
 }
 
-/* Focus: brass, square, offset — matches the manifest exactly */
 :focus-visible {
-  outline: 2px solid var(--wd-brass);
+  outline: 2px solid var(--wd-accent);
   outline-offset: 3px;
   border-radius: var(--wd-radius);
+  box-shadow: var(--wd-focus-halo);
 }
 
-/* ---------- Headings: Big Shoulders Display, tight leading ---------- */
+/* ---------- Headings ---------- */
 .sl-markdown-content h1,
 .sl-markdown-content h2,
 .sl-markdown-content h3,
@@ -55,66 +56,78 @@ body::before {
 .sl-markdown-content h6,
 h1#_top {
   font-family: var(--wd-font-display);
-  font-weight: 800;
-  letter-spacing: 0.01em;
+  font-weight: var(--wd-heading-weight);
+  letter-spacing: var(--wd-heading-tracking);
   color: var(--sl-color-white);
+  text-transform: var(--wd-heading-transform);
 }
 
+/* Starlight renders every heading as an INLINE element inside a block-level
+   `.sl-heading-wrapper`. Borders on an inline box fragment per wrapped line
+   (rail on line 1 only, rule under every line), so the section rule and the
+   accent rail live on the wrapper — and the rail is an inset shadow, which
+   sits inside the padding box and never meets the rule in a mitred corner. */
 .sl-markdown-content h2 {
-  font-size: clamp(1.9rem, 3.2vw, 2.6rem);
-  line-height: 0.98;
-  padding-bottom: 0.4rem;
+  font-size: var(--wd-h2-size);
+  line-height: var(--wd-h2-leading);
+}
+.sl-markdown-content .sl-heading-wrapper.level-h2,
+.sl-markdown-content > h2 {
+  padding-block-end: 0.5rem;
+  padding-inline-start: var(--wd-h2-pad);
   border-bottom: var(--wd-rule);
+  box-shadow: inset var(--wd-h2-rail) 0 0 var(--wd-accent);
+  border-radius: 0 0 0 var(--wd-radius);
 }
 .sl-markdown-content h3 {
-  font-size: 1.55rem;
-  font-weight: 700;
-  line-height: 1.02;
+  font-size: var(--wd-h3-size);
+  font-weight: var(--wd-heading-weight-sub);
+  line-height: 1.05;
+  letter-spacing: 0.01em;
 }
 .sl-markdown-content h4 {
-  font-size: 1.2rem;
-  font-weight: 700;
+  font-size: var(--wd-h4-size);
+  font-weight: var(--wd-heading-weight-sub);
+  letter-spacing: 0.01em;
 }
 .sl-markdown-content h5,
 .sl-markdown-content h6 {
   font-family: var(--wd-font-mono);
-  font-size: 0.72rem;
+  font-size: 0.71rem;
   font-weight: 500;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.11em;
   text-transform: uppercase;
   color: var(--wd-muted);
 }
 
-/* Page title — with a scoped "doc kicker" (manifest's .doc-number). Uses
-   the site title via CSS var set in Head override, so it is NOT hard-coded
-   into every heading like a bare `h1::before` would be. */
+/* Page title — kicker eyebrow set by Head.astro via --wd-kicker */
 h1#_top {
-  font-size: clamp(2.4rem, 5vw, 3.6rem);
-  line-height: 0.94;
+  font-size: var(--wd-h1-size);
+  line-height: var(--wd-h1-leading);
   margin-top: 0.4rem;
 }
 h1#_top::before {
-  content: var(--wd-kicker, 'BF6 Portal SDK');
-  display: block;
-  margin-bottom: 0.7rem;
+  content: var(--wd-kicker, 'BF6 PORTAL SDK');
+  display: flex;
+  align-items: center;
+  gap: 0.55em;
+  margin-bottom: 0.65rem;
   font-family: var(--wd-font-mono);
   font-size: 0.68rem;
   font-weight: 500;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--sl-color-accent);
 }
-/* …but never on the splash landing page, whose hero has its own eyebrow */
 [data-has-hero] h1#_top::before {
   content: none;
 }
 
-/* Anchor-heading hover affordance */
 .sl-anchor-link {
   color: var(--wd-muted);
 }
 .sl-anchor-link:hover {
-  color: var(--wd-brass-bright);
+  color: var(--wd-accent-bright);
 }
 
 /* ---------- Body copy ---------- */
@@ -131,7 +144,7 @@ h1#_top::before {
 }
 .sl-markdown-content a:not(.not-content a):not(.sl-anchor-link) {
   color: var(--sl-color-text-accent);
-  text-decoration-color: color-mix(in srgb, var(--wd-brass) 45%, transparent);
+  text-decoration-color: color-mix(in srgb, var(--wd-accent) 48%, transparent);
   text-underline-offset: 0.2em;
   transition: text-decoration-color var(--wd-fast) var(--wd-ease);
 }
@@ -139,39 +152,39 @@ h1#_top::before {
   text-decoration-color: currentColor;
 }
 
-/* Horizontal rules read as manifest dividers */
 .sl-markdown-content hr {
   border: 0;
   border-top: var(--wd-rule);
   margin-block: 2.5rem;
 }
 
-/* Blockquote: plate with brass rail */
 .sl-markdown-content blockquote {
   margin-inline: 0;
   padding: 0.9rem 1.2rem;
-  border-inline-start: 3px solid var(--wd-brass);
+  border: var(--wd-rule-strong);
+  border-radius: var(--wd-radius-lg);
+  box-shadow: inset 3px 0 0 var(--wd-accent);
   background: var(--wd-plate);
   color: var(--sl-color-text);
 }
 
-/* ---------- Inline code: brass on tinted plate ---------- */
+/* ---------- Inline code ---------- */
 .sl-markdown-content :not(pre) > code {
   font-family: var(--wd-font-mono);
   font-size: 0.86em;
-  color: var(--wd-brass-bright);
+  color: var(--wd-accent-bright);
   background: var(--sl-color-bg-inline-code);
   padding: 1.5px 5px;
   border-radius: var(--wd-radius);
-  border: 0;
+  border: var(--wd-inline-code-border);
 }
-/* keep inline code readable inside headings + links */
 .sl-markdown-content h1 code,
 .sl-markdown-content h2 code,
 .sl-markdown-content h3 code,
 .sl-markdown-content h4 code {
-  font-size: 0.8em;
+  font-size: 0.79em;
   letter-spacing: 0;
+  text-transform: none;
 }
 
 kbd {
@@ -185,13 +198,11 @@ kbd {
   color: var(--sl-color-white);
 }
 
-/* ---------- Scrollbars (thin, hairline) ---------- */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--wd-hairline-strong) transparent;
 }
 
-/* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -199,8 +210,8 @@ kbd {
   *,
   *::before,
   *::after {
-    animation-duration: 0.001ms;
-    animation-iteration-count: 1;
-    transition-duration: 0.001ms;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
   }
 }
